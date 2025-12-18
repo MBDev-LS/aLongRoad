@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TAILWIND_APP_NAME = 'theme'
+
+NPM_BIN_PATH = 'npm.cmd'
 
 # Application definition
 
@@ -37,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tailwind',
+    'theme'
 ]
 
 MIDDLEWARE = [
