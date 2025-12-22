@@ -2,22 +2,38 @@
 {% load static %}
 
 {% block body_content %}
-<div class="container mx-auto mt-10 w-full max-w-7xl min-h-screen bg-white">
+<div class="mt-10 w-full min-h-screen bg-transparent">
 
-    <main class="flex flex-col flex-nowrap w-full bg-blue-600">
-        <div class="flex flex-row flex-nowrap w-full bg-green-500">
-            <div class="hidden md:flex flex-1 justify-start bg-amber-500">
-                <text class="m-auto text-center">test LEFT HAND SIDE</text>
+    <main class="flex flex-col flex-nowrap w-full bg-transparent">
+        <div class="flex flex-row flex-nowrap w-full bg-transparent">
+            <div class="hidden md:flex flex-1 justify-start bg-transparent p-2">
+                <text class="ml-auto text-base md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl">#0001</text>
             </div>
 
-            <img src="{% static 'image1.png' %}" alt="image1" class="flex flex-4 justify-center max-w-full min-w-0 md:w-auto">
+            <img src="{% static 'Road_1.png' %}" alt="image1" class="flex flex-3 justify-center max-w-full min-w-0 md:w-auto w-full h-full">
 
-            <div class="hidden md:flex flex-1 justify-end bg-fuchsia-600">
-                <text class="m-auto text-center">test RIGHT HAND SIDE</text>
+            <div class="hidden md:flex flex-1 flex-col justify-end bg-transparent p-2">
+                <text class="text-left text-wrap">A title of the segment</text>
+                <text class="text-left text-wrap">By Roger Derek</text>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-left overflow-hidden break-words bg-sky-300">This is the description of my amazing image that you can see to the left of this text. I am very proud of it and I bought myself a sticker. I like the way the TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST hello world</p>
+                </div>
             </div>
 
         </div>
 
+        <div class="flex flex-row flex-nowrap w-full bg-transparent">
+            <div class="hidden md:flex flex-1 justify-start bg-transparent p-2">
+                <text class="m-auto text-center">#0001</text>
+            </div>
+
+            <img src="{% static 'Road_2.png' %}" alt="image1" class="flex flex-[3] justify-center max-w-full min-w-0 md:w-auto w-full">
+
+            <div class="hidden md:flex flex-1 justify-end bg-transparent p-2">
+                <text class="m-auto text-center"><h1>Pebbles</h1><br>A road made of pebbles which I found in my back garden.</text>
+            </div>
+
+        </div>
 
         <img src="{% static 'image2.png' %}" alt="image2" class="w-full block">
 
