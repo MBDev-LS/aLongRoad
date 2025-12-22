@@ -2,9 +2,35 @@
 {% load static %}
 
 {% block body_content %}
-<div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg border border-gray-200">
-    <img src="{% static 'image1.png' %}" alt="image1">
-    <img src="{% static 'image2.png' %}" alt="image2">
-    <img src="{% static 'image3.png' %}" alt="image3">
+<div class="container mx-auto mt-10 w-full max-w-7xl min-h-screen bg-white">
+
+    <main class="flex flex-col flex-nowrap w-full bg-blue-600">
+        <div class="flex flex-row flex-nowrap w-full bg-green-500">
+            <div class="hidden md:flex flex-1 justify-start bg-amber-500">
+                <text class="m-auto text-center">test LEFT HAND SIDE</text>
+            </div>
+
+            <img src="{% static 'image1.png' %}" alt="image1" class="flex flex-4 justify-center max-w-full min-w-0 md:w-auto">
+
+            <div class="hidden md:flex flex-1 justify-end bg-fuchsia-600">
+                <text class="m-auto text-center">test RIGHT HAND SIDE</text>
+            </div>
+
+        </div>
+
+
+        <img src="{% static 'image2.png' %}" alt="image2" class="w-full block">
+
+        <img src="{% static 'image3.png' %}" alt="image3" class="w-full block">
+    </main>
+
+    <main class="flex flex-col w-full">
+        <img src="{% static 'aha.jpg' %}" alt="aha" class="w-full block">
+
+        <img src="{% static 'gamer_cat.jpg' %}" alt="gamer_cat" class="w-full block">
+
+        <img src="{% static 'hippo.png' %}" alt="hippo" class="w-full block">
+    </main>
+
 </div>
 {% endblock %}
