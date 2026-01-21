@@ -1,4 +1,8 @@
+
 from django.db import models
+
+from datetime import datetime
+from django.utils import timezone
 
 # Create your models here.
 
@@ -19,10 +23,10 @@ class RoadSpaceReservation(models.Model):
 	expiryTime = models.DateTimeField(auto_now=False, auto_now_add=False) 
 
 
-	def setExpiryTime(self):
-		pass
-		
-		# Time reservation made at + set time period (e.g. 1 week)
+	def setExpiryTime(self, reservationLength: timezone.timedelta=timezone.timedelta(7)): # Placeholder default value of 7 days (1 week)
+		reservationExpiryTime = timezone.now() + reservationLength
+
+		return reservationExpiryTime
 
 
 class UserGeneratedRoadSegment(models.Model):
