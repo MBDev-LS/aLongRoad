@@ -22,8 +22,8 @@
                 <div class="pr-[5vw] second-child absolute inset-2 overflow-hidden">
 
                     <div class="third-child flex flex-1 flex-col">
-                        <h2 class="title-segment text-left text-wrap md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">A title of the segment</h2>
-                        <p class="author-segment md:mt-1 lg:mt-1 xl:mt-2 2xl:mt-2 text-left text-wrap md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">By Roger Derek</p>
+                        <h2 class="title-section text-left text-wrap md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">A title of the section</h2>
+                        <p class="author-section md:mt-1 lg:mt-1 xl:mt-2 2xl:mt-2 text-left text-wrap md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">By Roger Derek</p>
                         <div class="fourth-child flex-1 mt-2">
                             <p class="text-to-clamp text-left wrap-break-word overflow-hidden">This is the description of my amazing image that you can see to the left of this text. I am very proud of it and I bought myself a sticker. I like the way the hello world TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST end</p>
                         </div>
@@ -48,8 +48,8 @@
                 <div class="second-child absolute inset-2 overflow-hidden">
 
                     <div class="third-child flex flex-1 flex-col">
-                        <h2 class="title-segment text-left text-wrap md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">A title of the segment</h2>
-                        <p class="author-segment md:mt-1 lg:mt-1 xl:mt-2 2xl:mt-2 text-left text-wrap md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">By Roger Derek</p>
+                        <h2 class="title-section text-left text-wrap md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">A title of the section</h2>
+                        <p class="author-section md:mt-1 lg:mt-1 xl:mt-2 2xl:mt-2 text-left text-wrap md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">By Roger Derek</p>
                         <div class="fourth-child flex-1 mt-2">
                             <p class="text-to-clamp text-left wrap-break-word overflow-hidden">This is the description of my amazing image that you can see to the left of this text. I am very proud of it and I bought myself a sticker. I like the way the hello world TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST end</p>
                         </div>
@@ -74,8 +74,8 @@
             for (let i = 0; i < imageCollection.length; i++) {
 
                 let titleAuthorLocation = imageCollection[i].closest(".grid").querySelector(".third-child");
-                let title = titleAuthorLocation.querySelector(".title-segment");
-                let author = titleAuthorLocation.querySelector(".author-segment");
+                let title = titleAuthorLocation.querySelector(".title-section");
+                let author = titleAuthorLocation.querySelector(".author-section");
                 let textToClamp = titleAuthorLocation.querySelector(".text-to-clamp");
 
                 const lineHeight = parseFloat(getComputedStyle(textToClamp).lineHeight);
