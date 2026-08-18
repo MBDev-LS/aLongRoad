@@ -1,0 +1,964 @@
+<title>Winding Road Design Plan</title>
+<style>
+  :root {
+    --paper:      #F6F8F6;
+    --paper-2:    #ECEFEC;
+    --paper-3:    #E3E7E3;
+    --ink:        #14181A;
+    --ink-2:      #565F5A;
+    --ink-3:      #7C857F;
+    --rule:       #D3D8D4;
+    --rule-soft:  #E2E6E2;
+    --accent:     #1E5B3E;
+    --accent-2:   #2C7C55;
+    --accent-ink: #FFFFFF;
+    --ochre:      #8A6118;
+    --flag:       #A33726;
+
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Charter, Georgia, "Liberation Serif", serif;
+    --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    --measure: 68ch;
+    --rail: 4.75rem;
+    --gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #101312; --paper-2: #171B19; --paper-3: #1E2321;
+      --ink: #E7EBE8; --ink-2: #9DA69F; --ink-3: #79837C;
+      --rule: #2A302C; --rule-soft: #212623;
+      --accent: #78C79A; --accent-2: #A2DCBB; --accent-ink: #08120C;
+      --ochre: #D2A85C; --flag: #E0806E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #101312; --paper-2: #171B19; --paper-3: #1E2321;
+    --ink: #E7EBE8; --ink-2: #9DA69F; --ink-3: #79837C;
+    --rule: #2A302C; --rule-soft: #212623;
+    --accent: #78C79A; --accent-2: #A2DCBB; --accent-ink: #08120C;
+    --ochre: #D2A85C; --flag: #E0806E;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper); color: var(--ink); font-family: var(--serif);
+    font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem); line-height: 1.62;
+    margin: 0; padding: 0 var(--gap) 6rem; font-synthesis-weight: none;
+  }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: from-font; }
+  a:hover { color: var(--accent-2); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: calc(var(--rail) + var(--measure) + 2rem); margin: 0 auto; }
+
+  .masthead { padding: clamp(3rem, 9vw, 6rem) 0 2rem; border-bottom: 1px solid var(--rule); }
+  .eyebrow { font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-2); margin: 0 0 1.25rem; }
+  h1 { font-weight: 600; font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.4rem); line-height: 1.06;
+    letter-spacing: -0.018em; text-wrap: balance; margin: 0 0 1rem; max-width: 20ch; }
+  .standfirst { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.2rem); color: var(--ink-2);
+    max-width: 58ch; margin: 0 0 1.5rem; line-height: 1.55; }
+  .meta { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--ink-3);
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; margin: 0; }
+
+  .sec { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: 2rem; padding: 3.25rem 0 0; }
+  .sec > * { grid-column: 2; }
+  .sec-no { grid-column: 1; grid-row: span 60; font-family: var(--mono); font-size: 0.75rem;
+    letter-spacing: 0.1em; color: var(--ink-3); padding-top: 0.5rem; position: sticky; top: 1.25rem; align-self: start; }
+  h2 { font-size: clamp(1.5rem, 1.2rem + 1.1vw, 1.95rem); font-weight: 600; letter-spacing: -0.012em;
+    line-height: 1.18; text-wrap: balance; margin: 0 0 0.35rem; padding-top: 0.9rem; border-top: 2px solid var(--ink); }
+  h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.006em; margin: 2.25rem 0 0.5rem; text-wrap: balance; }
+  h4 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--ink-2); font-weight: 500; margin: 1.75rem 0 0.6rem; }
+  p { margin: 0 0 1rem; max-width: var(--measure); }
+  .lede { color: var(--ink-2); font-size: 1.08em; margin-bottom: 1.5rem; }
+  ul, ol { max-width: var(--measure); margin: 0 0 1rem; padding-left: 1.15rem; }
+  li { margin: 0 0 0.45rem; padding-left: 0.2rem; }
+  li::marker { color: var(--ink-3); }
+  strong { font-weight: 600; }
+  code { font-family: var(--mono); font-size: 0.855em; background: var(--paper-2); padding: 0.12em 0.36em;
+    border-radius: 3px; border: 1px solid var(--rule-soft); word-break: break-word; }
+
+  .find { border-top: 1px solid var(--rule); padding: 1.15rem 0 0.35rem; display: grid; gap: 0.5rem; }
+  .find:first-of-type { border-top: 1px solid var(--ink); }
+  .find-head { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+  .find-id { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.06em; }
+  .find-t { font-weight: 600; font-size: 1.05rem; flex: 1 1 16ch; }
+  .find p { margin: 0; color: var(--ink-2); }
+  .find p + p { margin-top: 0.5rem; }
+  .sev { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.11em; text-transform: uppercase;
+    padding: 0.22em 0.55em; border-radius: 2px; white-space: nowrap; border: 1px solid; }
+  .sev.blocks { color: var(--flag); border-color: var(--flag); }
+  .sev.shapes { color: var(--ochre); border-color: var(--ochre); }
+  .sev.tidy { color: var(--ink-3); border-color: var(--rule); }
+
+  .note { background: var(--paper-2); border-left: 2px solid var(--accent); padding: 1rem 1.15rem;
+    margin: 1.5rem 0; max-width: var(--measure); }
+  .note > :last-child { margin-bottom: 0; }
+  .note .h { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--accent); display: block; margin-bottom: 0.5rem; }
+  .note.warn { border-left-color: var(--flag); }
+  .note.warn .h { color: var(--flag); }
+  .note.new { border-left-color: var(--ochre); }
+  .note.new .h { color: var(--ochre); }
+
+  .tw { overflow-x: auto; margin: 1rem 0 1.5rem; border-top: 1px solid var(--ink); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; min-width: 34rem; }
+  th, td { text-align: left; padding: 0.55rem 1rem 0.55rem 0; border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top; font-variant-numeric: tabular-nums; }
+  th { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.11em; text-transform: uppercase;
+    color: var(--ink-2); font-weight: 500; padding-top: 0.7rem; }
+  td:last-child, th:last-child { padding-right: 0; }
+  td.m { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.6rem; margin: 1rem 0 1.5rem; }
+  .sw { border: 1px solid var(--rule); }
+  .sw .chip { height: 3.4rem; }
+  .sw .lab { padding: 0.45rem 0.55rem; font-family: var(--mono); font-size: 0.66rem; line-height: 1.5;
+    color: var(--ink-2); background: var(--paper-2); }
+  .sw .lab b { display: block; color: var(--ink); font-weight: 500; letter-spacing: 0.04em; }
+
+  .fig { margin: 1.75rem 0; }
+  .fig-body { background: var(--paper-2); border: 1px solid var(--rule); padding: 1.25rem; overflow-x: auto; }
+  .fig svg { display: block; width: 100%; min-width: 32rem; height: auto; }
+  figcaption { font-family: var(--mono); font-size: 0.7rem; line-height: 1.65; color: var(--ink-2);
+    margin-top: 0.7rem; max-width: var(--measure); letter-spacing: 0.01em; }
+  .d-road { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .d-vac { fill: none; stroke: var(--ink-3); stroke-width: 3; stroke-dasharray: 7 6; }
+  .d-tile { fill: none; stroke: var(--rule); stroke-width: 1; }
+  .d-tilev { fill: none; stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 3 4; }
+  .d-seam { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 5 5; }
+  .d-lab { font-family: var(--mono); font-size: 13px; fill: var(--ink-2); }
+  .d-lab.a { fill: var(--accent); }
+  .d-lab.o { fill: var(--ochre); }
+  .d-title { font-family: var(--mono); font-size: 15px; fill: var(--ink); letter-spacing: 1px; }
+
+  pre { background: var(--paper-2); border: 1px solid var(--rule-soft); border-left: 2px solid var(--rule);
+    padding: 0.9rem 1.1rem; overflow-x: auto; margin: 1rem 0 1.5rem; max-width: var(--measure);
+    font-size: 0.8rem; line-height: 1.6; }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+  .phase { border-top: 1px solid var(--rule); padding: 1.1rem 0 0.4rem; }
+  .phase:first-of-type { border-top-color: var(--ink); }
+  .phase-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.45rem; }
+  .phase-n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; }
+  .phase-t { font-weight: 600; font-size: 1.05rem; flex: 1 1 14ch; }
+  .phase-dep { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-3); letter-spacing: 0.05em; }
+  .exit { font-size: 0.9rem; color: var(--ink-2); margin-top: 0.5rem; }
+  .exit b { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; }
+
+  .dd { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.25rem; margin: 1.25rem 0 1.5rem; }
+  .dd > div { border-top: 2px solid var(--rule); padding-top: 0.8rem; }
+  .dd .yes { border-top-color: var(--accent); }
+  .dd .no { border-top-color: var(--flag); }
+  .dd h5 { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    margin: 0 0 0.6rem; font-weight: 500; }
+  .dd .yes h5 { color: var(--accent); }
+  .dd .no h5 { color: var(--flag); }
+  .dd ul { margin: 0; padding-left: 1.05rem; font-size: 0.9rem; color: var(--ink-2); }
+
+  footer { margin-top: 4.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule);
+    font-family: var(--mono); font-size: 0.7rem; color: var(--ink-3); line-height: 1.8; letter-spacing: 0.02em; }
+
+  @media (max-width: 46rem) {
+    .sec { grid-template-columns: 1fr; }
+    .sec > * { grid-column: 1; }
+    .sec-no { grid-row: auto; position: static; padding-top: 0; margin-bottom: 0.4rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Design plan · The Long And Winding Road · Revision 3</p>
+  <h1>From prototype to a road worth walking</h1>
+  <p class="standfirst">A design direction, a layout architecture, and a phased build order that takes the current two-row prototype to a polished front page — ready for the loading system to be written on top of it.</p>
+  <p class="meta">
+    <span>18 Aug 2026</span>
+    <span>Issues #1 · #3 · #7</span>
+    <span>Branch Issue-7 @ e70b1ac</span>
+    <span>Rev 3: routing, UUIDs, decisions for Damian</span>
+  </p>
+</header>
+
+<section class="sec">
+  <div class="sec-no">00</div>
+  <h2>What changed in this revision</h2>
+  <p class="lede">The first draft made two structural proposals. One was rejected and one was overtaken by information. Both changes improve the design, and both are load-bearing enough that the rest of the document is built on them rather than patched around them.</p>
+
+  <div class="note new">
+    <span class="h">Change 1 — the road is chained, not anchored</span>
+    <p>The first draft proposed <em>universal anchors</em>: every section entering and exiting at the same fixed coordinates so any piece joins any other. That was rejected, correctly — "the key is in the word <em>winding</em>". The road instead stays genuinely chained, and the join is guaranteed by a <strong>server-issued template</strong>: when you reserve a slot, you are handed the exact entry and exit points your artwork must honour. §4 rebuilds the layout around this.</p>
+  </div>
+
+  <div class="note new">
+    <span class="h">Change 2 — sections are canvases, not line drawings</span>
+    <p>The first draft treated the road as a stroked line that recolours with the theme. It isn't. Contributors get a rectangle and may fill the whole of it, so a section is an <strong>opaque raster image the site does not restyle</strong>. Dark mode applies to the page around the artwork, never to the artwork. That kills the <code>currentColor</code> SVG recommendation entirely and changes the palette reasoning, the image pipeline, and the accessibility argument. §3.1, §8 and §7 are rewritten accordingly.</p>
+  </div>
+
+  <p>Two smaller corrections: the loading mechanics are <em>not</em> worked out elsewhere yet — the page structure comes first and defines what the loader has to work with, so §8 now specifies that contract rather than deferring to it. And the gallery metaphor governs the <em>space</em>, not the <em>vocabulary</em>: no plaques, no "accession", nothing skeuomorphic.</p>
+
+  <h3>Added in revision 3</h3>
+  <p>The full answers revealed a piece of the system the earlier drafts missed entirely: the templates are not simply copied from the section below. A <strong>routing algorithm</strong> chooses them, steering the road toward custom-template sections waiting in a queue. That is the most technically interesting part of the project and §4.3 now covers it.</p>
+  <p>Also new: permalinks use UUIDs (§8.2, with one correction to the conclusion drawn from that), an explicit <strong>security</strong> section (§11) since it's a stated priority, and a <strong>decisions for Damian</strong> section (§12) collecting the four questions that need his eye, written so they can be read standalone.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">01</div>
+  <h2>Where the prototype stands</h2>
+  <p class="lede">Two hardcoded rows, a 100-column grid, and a resize-driven text clamp. It renders — but almost every decision in it is a placeholder. Ordered by how much each constrains what comes next.</p>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.1</span><span class="find-t">Mobile users get no content at all</span><span class="sev blocks">Blocks design</span></div>
+    <p>Below the <code>md</code> breakpoint, both the index column and the entire text panel carry <code>hidden</code>. A phone visitor sees a column of drawings with no number, no title, no author, no description — the whole point of the site, absent. Content parity across viewports is not optional, and this is now the most serious defect in the file.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.2</span><span class="find-t">Section widths are inconsistent, so nothing can line up</span><span class="sev blocks">Blocks design</span></div>
+    <p>Row one splits 25/50/25; row two splits 20/60/20. The first road renders at 50% of the viewport and the second at 60%, and both are stretched with <code>w-full h-full</code>, discarding their aspect ratios by different amounts. With a chained road this is fatal rather than untidy: if the artwork column is not one exact width for every section, no template can guarantee a join. §4.1 rebuilds the grid around a single width token.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.3</span><span class="find-t">The existing artwork proves why templates are needed</span><span class="sev shapes">Informs design</span></div>
+    <p>Measured from the committed PNGs by sampling the first and last raster rows: <code>Road_1</code> exits at x=213/390 and enters at x=290/466; <code>Road_2</code> exits at x=312/450 and enters at x=214/389. So <code>Road_1</code>&nbsp;→&nbsp;<code>Road_2</code> matches to within a pixel — they were drawn as a pair — while <code>Road_2</code>&nbsp;→&nbsp;<code>Road_1</code> steps sideways by 22px and 16px.</p>
+    <p>That is exactly the behaviour the template system exists to prevent: hand-chaining works only when both pieces are authored together, which is never true of strangers. It also shows the road width drifting — <code>Road_2</code> narrows to 138 units at its exit against 175–177 elsewhere — which is fine under a template that carries both edges independently, and impossible under one that assumes a constant width. Both files are throwaway test art and need no conversion.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.4</span><span class="find-t">There is no page — only a list</span><span class="sev shapes">Shapes design</span></div>
+    <p>No masthead, no logo slot, no <code>&lt;h1&gt;</code>, no footer, no add-a-section entry point, no theme control. The document has exactly one heading level — two <code>&lt;h2&gt;</code>s floating in a bare <code>&lt;main&gt;</code> — so anyone arriving with a screen reader gets no orientation at all.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.5</span><span class="find-t">Dark mode is accidental</span><span class="sev shapes">Shapes design</span></div>
+    <p>DaisyUI ships a <code>prefers-color-scheme: dark</code> block that sets <code>color-scheme: dark</code> on the root, so the browser flips its default background. The template sets <code>bg-transparent</code> and uses no theme token anywhere, so nothing else responds. There is no toggle, no persistence, and no system/light/dark tri-state.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.6</span><span class="find-t">The clamp script will not survive the loader</span><span class="sev shapes">Shapes design</span></div>
+    <p>A <code>ResizeObserver</code> watches <code>&lt;body&gt;</code> and, on every fire, loops every image reading <code>offsetHeight</code> and <code>getComputedStyle</code>, then writes inline styles — a read-write-read layout thrash, O(n) in loaded sections, on an element whose height the loop itself changes. Invisible at two rows; a stutter on every scroll-triggered load at four hundred. §5.4 replaces it with no JavaScript at all.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.7</span><span class="find-t">Images declare no intrinsic size</span><span class="sev shapes">Shapes design</span></div>
+    <p>No <code>width</code>/<code>height</code> attributes and no <code>aspect-ratio</code>, so each image reflows the page as it decodes. Under a scroll-driven loader that is not cosmetic — it moves the reader's position under their thumb as sections resolve.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.8</span><span class="find-t">No design system exists</span><span class="sev shapes">Shapes design</span></div>
+    <p>No typefaces (Tailwind's default <code>font-sans</code> stack), no palette, no spacing scale, no motion language. Sizes are set per-element with five breakpoint variants each — <code>md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl</code> — a type scale spelled out longhand at every call site instead of defined once.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.9</span><span class="find-t">Structural class names carry no meaning</span><span class="sev tidy">Housekeeping</span></div>
+    <p><code>first-child</code> through <code>fourth-child</code> describe position in a tree that will change, shadow the real CSS pseudo-classes they're named after, and are load-bearing for the clamp script's <code>querySelector</code> calls. Separately <code>col-span-0</code> compiles to <code>grid-column: span 0</code>, which is invalid — browsers clamp it to 1. It does nothing; the neighbouring <code>hidden</code> is doing all the work.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-head"><span class="find-id">1.10</span><span class="find-t">Loose ends</span><span class="sev tidy">Housekeeping</span></div>
+    <p>Eight of the ten files in <code>static/images/</code> are orphans from earlier experiments, totalling ~390KB. <code>README.md</code> is UTF-16 and contains one line. <code>SECRET_KEY</code> is hardcoded and <code>ALLOWED_HOSTS</code> is empty. <code>tests.py</code> is the stock stub. The page <code>&lt;script&gt;</code> is inline in the content block rather than a static module in <code>extra_js</code>. Templates and static files are not namespaced under <code>render/</code>, so any other app can shadow <code>index.html</code>.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-no">02</div>
+  <h2>The direction: a modern gallery for art</h2>
+  <p class="lede">Not a gallery <em>of</em> modern art — a modern gallery, hung with drawings. The metaphor governs the space and the restraint. It does not govern the vocabulary, and nothing on the page should look like a physical object.</p>
+
+  <p>A gallery does three things worth copying. It gives each work far more empty wall than the work occupies. It keeps its own signage rigorously consistent and rigorously quiet. And it numbers everything, because an inventory number is how a collection admits it is a collection.</p>
+
+  <p>What it does <em>not</em> do here is dress up. No engraved plaque beside each piece, no serif museum labels, no "accession no.", no faux-material textures. The register is modern web design executed with gallery discipline — which is a harder and better target than either on its own.</p>
+
+  <div class="note">
+    <span class="h">The constraint that decides most of this</span>
+    <p>Every section is a full-colour image chosen by a stranger, and the site never restyles it. Four hundred uncontrolled artworks stacked in a column is already an enormous amount of visual noise. <strong>So the chrome must recede — not as taste, but as function.</strong> A loud accent, a decorated frame, or a heavy type treatment would be competing with the content for attention and would lose. Everything in §3 follows from this.</p>
+  </div>
+
+  <p>The personality lives in three places, none of which fight the artwork: the typography, the scale contrast between a large inventory numeral and small quiet metadata, and the premise itself — one continuous road drawn by hundreds of strangers, presented with complete seriousness. That last one is genuinely funny <em>because</em> the presentation doesn't wink at it.</p>
+
+  <div class="dd">
+    <div class="yes">
+      <h5>Do</h5>
+      <ul>
+        <li>Hairlines and alignment instead of borders and cards</li>
+        <li>Neutral chrome that lets the artwork be the only colour</li>
+        <li>Large inventory numerals; small, plain metadata</li>
+        <li>Generous asymmetric whitespace — the wall, not padding</li>
+        <li>Off-white and warm charcoal grounds, never <code>#fff</code> or <code>#000</code></li>
+        <li>Motion that is short, interruptible, and only on interaction</li>
+      </ul>
+    </div>
+    <div class="no">
+      <h5>Don't</h5>
+      <ul>
+        <li>Museum vocabulary in the UI — "plaque", "hang", "accession"</li>
+        <li>Anything skeuomorphic: engraved labels, paper texture, frames</li>
+        <li>Cards with <code>shadow-lg</code> and <code>rounded-xl</code> on a grey ground</li>
+        <li>Gradient headlines, glassmorphism, <code>backdrop-blur</code>, glow borders</li>
+        <li>Emoji as iconography; Inter or Space Grotesk as the face</li>
+        <li>A centred hero with two pill buttons under it</li>
+        <li>Scroll-triggered entrance animations on every section</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-no">03</div>
+  <h2>Design system</h2>
+
+  <h3>3.1 · Palette</h3>
+  <p>Still open, and this proposal is deliberately quieter than the first draft's. Paper ground was confirmed as the right instinct. The neutrals are cool and very slightly green — plaster under daylight-balanced gallery lighting rather than warm paper stock, which matters because warm cream will cast against whatever colours contributors use.</p>
+
+  <p>The accent is road-sign green: thematically apt twice over, legible on both grounds, and not the vermilion-on-cream that generated design defaults to. Critically it appears on <strong>interface only</strong> — links, focus rings, the add-a-section tile — and never as a decorative wash, because it has to coexist with 400 artworks it cannot predict.</p>
+
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#F6F8F6"></div><div class="lab"><b>paper</b>#F6F8F6</div></div>
+    <div class="sw"><div class="chip" style="background:#ECEFEC"></div><div class="lab"><b>paper-2</b>#ECEFEC</div></div>
+    <div class="sw"><div class="chip" style="background:#14181A"></div><div class="lab"><b>ink</b>#14181A</div></div>
+    <div class="sw"><div class="chip" style="background:#565F5A"></div><div class="lab"><b>ink-2</b>#565F5A</div></div>
+    <div class="sw"><div class="chip" style="background:#D3D8D4"></div><div class="lab"><b>rule</b>#D3D8D4</div></div>
+    <div class="sw"><div class="chip" style="background:#1E5B3E"></div><div class="lab"><b>accent</b>#1E5B3E</div></div>
+    <div class="sw"><div class="chip" style="background:#8A6118"></div><div class="lab"><b>ochre</b>#8A6118</div></div>
+    <div class="sw"><div class="chip" style="background:#A33726"></div><div class="lab"><b>flag</b>#A33726</div></div>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Token</th><th>Light</th><th>Dark</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td class="m">--paper</td><td class="m">#F6F8F6</td><td class="m">#101312</td><td>The wall. Page ground.</td></tr>
+      <tr><td class="m">--paper-2</td><td class="m">#ECEFEC</td><td class="m">#171B19</td><td>Recessed panels, the mobile drawer, vacant slots.</td></tr>
+      <tr><td class="m">--ink</td><td class="m">#14181A</td><td class="m">#E7EBE8</td><td>Body text and section titles.</td></tr>
+      <tr><td class="m">--ink-2</td><td class="m">#565F5A</td><td class="m">#9DA69F</td><td>Metadata, descriptions, secondary controls.</td></tr>
+      <tr><td class="m">--ink-3</td><td class="m">#7C857F</td><td class="m">#79837C</td><td>Numeral outline, list markers, vacant-slot road.</td></tr>
+      <tr><td class="m">--rule</td><td class="m">#D3D8D4</td><td class="m">#2A302C</td><td>Hairlines. The only structural device.</td></tr>
+      <tr><td class="m">--accent</td><td class="m">#1E5B3E</td><td class="m">#78C79A</td><td>Links, focus ring, add-a-section, active numeral.</td></tr>
+      <tr><td class="m">--ochre</td><td class="m">#8A6118</td><td class="m">#D2A85C</td><td>Reserved-slot state. Nothing else.</td></tr>
+      <tr><td class="m">--flag</td><td class="m">#A33726</td><td class="m">#E0806E</td><td>Report and destructive confirmation only.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note warn">
+    <span class="h">The artwork does not theme</span>
+    <p>Sections are the contributor's canvas and the site must not filter, invert, dim, or recolour them in dark mode. Doing so would be editing someone's drawing. This means the artwork column stays bright against a dark wall at night — which is exactly what a gallery looks like after hours, and is fine. What it does require is that the <em>seam between artwork and page</em> be handled deliberately: see §5.3.</p>
+  </div>
+
+  <h3>3.2 · Typography</h3>
+  <p>Three roles. All three recommendations are under the SIL Open Font Licence — free to use, self-host, and modify, commercially included.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Role</th><th>Face</th><th>Licence</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Section titles</strong></td><td class="m">Fraunces</td><td class="m">OFL</td><td>Variable, with <code>WONK</code> and <code>SOFT</code> axes that work as a personality dial — serious at low wonk, grinning at high. That is the tone brief in a font file.</td></tr>
+      <tr><td><strong>Body &amp; UI</strong></td><td class="m">Instrument Sans</td><td class="m">OFL</td><td>A grotesque with narrow proportions and real character. Modern without reading like a SaaS dashboard. Public Sans is the safer substitute.</td></tr>
+      <tr><td><strong>Numerals &amp; labels</strong></td><td class="m">IBM Plex Mono</td><td class="m">OFL</td><td>Tabular by construction, so <code>#0001</code> and <code>#1631</code> occupy identical width — which matters stacked four hundred deep.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Self-host as subset woff2 with <code>font-display: swap</code>, served from <code>static/</code>. Not the Google Fonts CDN: it adds a third-party connection on every page load, complicates a future CSP, and is a poor privacy story for a site that already wants to collect as little as possible.</p>
+
+  <h4>Scale</h4>
+  <p>Define once as tokens, apply as one class. The metadata is <em>small</em>; the numeral is the only place scale gets to be loud.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Token</th><th>Size</th><th>Applied to</th></tr></thead>
+    <tbody>
+      <tr><td class="m">--t-numeral</td><td class="m">clamp(3rem, 7vw, 7rem)</td><td>Inventory number, outlined</td></tr>
+      <tr><td class="m">--t-title</td><td class="m">clamp(1.25rem, 1.6vw, 1.75rem)</td><td>Section title (Fraunces)</td></tr>
+      <tr><td class="m">--t-body</td><td class="m">1rem</td><td>Description</td></tr>
+      <tr><td class="m">--t-meta</td><td class="m">0.8125rem</td><td>Author</td></tr>
+      <tr><td class="m">--t-label</td><td class="m">0.6875rem / 0.14em tracking / uppercase</td><td>Actions, state labels</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4>The numeral</h4>
+  <p>Set in outline — transparent fill, hairline stroke — so it sits back on the wall like stencilled signage instead of shouting over the drawing beside it. It fills solid in <code>--accent</code> when its section is hovered, focused, or expanded. One rule, and it is the most characterful thing on the page.</p>
+  <pre><code>.road-index {
+  font: var(--t-numeral)/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--ink-3);
+  transition: color 160ms ease-out, -webkit-text-stroke-color 160ms ease-out;
+}
+.road-section:is(:hover, :focus-within, [data-expanded]) .road-index {
+  color: var(--accent);
+  -webkit-text-stroke-color: var(--accent);
+}</code></pre>
+  <p>Numbers keep growing past 9999 rather than switching format. Pad to four digits as a minimum and let five-digit numbers simply be wider — tabular figures mean the column stays aligned either way.</p>
+
+  <h3>3.3 · Spacing and motion</h3>
+  <p>One 4px-based scale, with two rules that matter more than the numbers. <strong>The road stack has zero gap</strong> — sections butt together with no margin, border, or rounding, or the chain visibly breaks. Everything outside the road is generous to the point of feeling slightly empty. That contrast between a tight unbroken column of artwork and a lot of quiet wall is what makes it read as a hang rather than a feed.</p>
+
+  <p>Issue #1 asks for transitions that are "quick and elegantly cancellable". That phrasing points at a specific implementation: <strong>CSS transitions, not keyframe animations and not JS tweens.</strong> An interrupted transition retargets from its current computed value automatically, so cancellability is correct by construction. A keyframe animation restarts; a JS tween has to be unwound by hand.</p>
+  <ul>
+    <li>150–220ms for state changes, 260ms for the mobile disclosure. Nothing longer.</li>
+    <li><code>ease-out</code> entering, <code>ease-in</code> leaving.</li>
+    <li>Transition <code>transform</code>, <code>opacity</code> and <code>grid-template-rows</code> only. Never <code>height</code>, <code>top</code> or <code>width</code>.</li>
+    <li>No scroll-triggered reveals. Sections appear because they loaded, not because they performed.</li>
+    <li>Full <code>prefers-reduced-motion: reduce</code> path.</li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-no">04</div>
+  <h2>Layout architecture</h2>
+
+  <h3>4.1 · The spine</h3>
+  <p>Replace the 100-column percentage grid with a three-track grid built around one artwork-width token. The artwork is a fixed track; the flanks absorb everything else. This is what makes "fixed width, variable height" true rather than aspirational — and under a chained road it is a correctness requirement, not a preference.</p>
+
+  <pre><code>.road {
+  --road-w: clamp(17.5rem, 42vw, 34rem);
+  display: grid;
+  grid-template-columns:
+    [num-start] minmax(0, 1fr) [num-end art-start]
+    var(--road-w) [art-end meta-start]
+    minmax(0, 1fr) [meta-end];
+  row-gap: 0;              /* non-negotiable */
+}
+.road-meta { max-inline-size: 36ch; }</code></pre>
+
+  <p>Both flanks are <code>1fr</code> so the artwork stays optically centred; the metadata is capped at 36ch so it never sprawls into an unreadable measure on a wide monitor. The numeral is right-aligned against the artwork's left edge and the metadata left-aligned against its right edge — the road is the axis everything hangs off.</p>
+
+  <h3>4.2 · The chain contract</h3>
+  <p class="lede">Universal anchors are out. The road genuinely winds, and the join is guaranteed by data rather than by a constant.</p>
+
+  <p>Every section carries four numbers describing where the road meets its top and bottom edges: <code>entry_l</code>, <code>entry_r</code>, <code>exit_l</code>, <code>exit_r</code>, expressed as fractions of the artwork width so they are resolution-independent. The chain rule is simply:</p>
+
+  <pre><code>section[n].exit_l == section[n+1].entry_l
+section[n].exit_r == section[n+1].entry_r</code></pre>
+
+  <p>Nothing about that is enforced by the artwork itself — it is enforced by <strong>the template the server issues at reservation time</strong>. Reserve a slot and you are told the exact coordinates your drawing must start and finish at. Because the width may drift between entry and exit (§1.3 shows the existing art already does this), the two edges are carried independently rather than as a centreline plus a width.</p>
+
+  <figure class="fig">
+    <div class="fig-body">
+      <svg viewBox="0 0 820 430" role="img" aria-labelledby="chaintitle chaindesc">
+        <title id="chaintitle">The four anchors on one section, and how they propagate down the chain</title>
+        <desc id="chaindesc">Left: a single section tile with its road entering at two marked points on the top edge and exiting at two marked points on the bottom edge. Right: three stacked tiles where each tile's exit points are the next tile's entry points, with the middle tile shown vacant and drawn as a dashed placeholder road.</desc>
+
+        <text class="d-title" x="0" y="16">ONE SECTION</text>
+        <g transform="translate(0,40)">
+          <rect class="d-tile" x="40" y="20" width="280" height="320"/>
+          <path class="d-road" d="M110,20 C110,110 70,150 78,220 C84,290 88,310 90,340"/>
+          <path class="d-road" d="M200,20 C200,110 175,160 190,230 C205,300 225,320 230,340"/>
+          <circle cx="110" cy="20" r="5" fill="var(--accent)"/>
+          <circle cx="200" cy="20" r="5" fill="var(--accent)"/>
+          <circle cx="90" cy="340" r="5" fill="var(--accent)"/>
+          <circle cx="230" cy="340" r="5" fill="var(--accent)"/>
+          <text class="d-lab a" x="40" y="12">entry_l</text>
+          <text class="d-lab a" x="210" y="12">entry_r</text>
+          <text class="d-lab a" x="20" y="362">exit_l</text>
+          <text class="d-lab a" x="215" y="362">exit_r</text>
+          <text class="d-lab" x="40" y="386">Width fixed. Height free.</text>
+        </g>
+
+        <text class="d-title" x="440" y="16">THE CHAIN</text>
+        <g transform="translate(440,40)">
+          <rect class="d-tile" x="60" y="20" width="220" height="100"/>
+          <rect class="d-tilev" x="60" y="120" width="220" height="100"/>
+          <rect class="d-tile" x="60" y="220" width="220" height="100"/>
+
+          <path class="d-road" d="M120,20 C120,60 105,80 108,120"/>
+          <path class="d-road" d="M200,20 C200,60 192,85 196,120"/>
+          <path class="d-vac" d="M108,120 C108,160 120,190 116,220"/>
+          <path class="d-vac" d="M196,120 C196,160 210,190 208,220"/>
+          <path class="d-road" d="M116,220 C116,260 100,290 105,320"/>
+          <path class="d-road" d="M208,220 C208,260 220,290 215,320"/>
+
+          <circle cx="108" cy="120" r="4.5" fill="var(--accent)"/>
+          <circle cx="196" cy="120" r="4.5" fill="var(--accent)"/>
+          <circle cx="116" cy="220" r="4.5" fill="var(--accent)"/>
+          <circle cx="208" cy="220" r="4.5" fill="var(--accent)"/>
+
+          <text class="d-lab" x="0" y="70">#1632</text>
+          <text class="d-lab o" x="0" y="170">#1631</text>
+          <text class="d-lab o" x="0" y="188">vacant</text>
+          <text class="d-lab" x="0" y="275">#1630</text>
+          <text class="d-lab a" x="290" y="124">exit == entry</text>
+          <text class="d-lab a" x="290" y="224">exit == entry</text>
+          <text class="d-lab" x="60" y="346">A vacant slot still has to</text>
+          <text class="d-lab" x="60" y="364">connect its neighbours.</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Anchors are stored as fractions of the artwork width, so they survive any rendered road width. The server issues them as a template when a slot is reserved; the submission is validated against that template rather than against a global constant.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="h">Vacant slots are normal operation</span>
+    <p>Slots are allocated lowest-available-first, a removed section frees its slot for reassignment, and a reservation holds a slot before the artwork exists. The chain therefore contains slots with no artwork in them, mid-road, as a matter of routine — and the top of the road is <strong>the highest-numbered <em>completed</em> section</strong>, not the highest-numbered reserved one.</p>
+    <p>Placeholders are <strong>generated automatically</strong>: a vacant slot cannot be skipped, because its neighbours' anchors were issued against it. It draws the connecting road its template requires, in chrome rather than artwork. That makes it the best acquisition surface on the site — every gap is an invitation to fill it, and it links straight into the reservation flow. §5.5 specifies the two states.</p>
+  </div>
+
+  <h3>4.3 · Routing: how a template gets chosen</h3>
+  <p class="lede">This is the part that makes the project genuinely interesting, and it is the part that is least designed. It is also, correctly, being left until the main submission flow works.</p>
+
+  <p>Templates are not simply inherited from the section below. Contributors who already have artwork — a photo that happens to match a certain format, or a section drawn before signing up — can submit a <strong>custom template</strong> specifying the entry and exit points and width they need. Those go into a queue, and the road is then <em>steered toward them</em>: the routing algorithm treats queued custom templates as <strong>waypoints</strong>, winds gradually toward each one, and arrives at exactly the geometry that section requires.</p>
+
+  <p>So the algorithm's job, each time a standard slot is allocated, is to choose an exit that (a) continues smoothly from the current entry, (b) makes progress toward the next waypoint, and (c) stays inside the canvas. Everything below is design consideration rather than specification — the algorithm itself is deliberately deferred.</p>
+
+  <h4>Constraints worth fixing before writing it</h4>
+  <ul>
+    <li><strong>Movement budget.</strong> The road can only shift so far laterally within one section before it stops looking like a road. Express this as a maximum lateral change per unit of height, and the whole problem becomes tractable — reachability is then computable rather than guessed.</li>
+    <li><strong>Width converges too.</strong> Waypoints specify width as well as position, so the steering is two-dimensional: centreline <em>and</em> width. Width should change more slowly than position; a road that rapidly narrows reads as a mistake rather than a bend.</li>
+    <li><strong>Containment.</strong> The road must stay within the canvas with a margin. This is a hard constraint on steering and the most likely source of visible ugliness if it's added late.</li>
+    <li><strong>It isn't quite the travelling salesman.</strong> Classic TSP assumes free travel between nodes; here travel is constrained by the movement budget and the visiting order is fixed by slot number. It's closer to <strong>trajectory planning with via-points</strong> — and a greedy "nearest reachable waypoint first" will almost certainly be good enough. Worth knowing so you don't reach for a heavier algorithm than the problem needs.</li>
+    <li><strong>Starvation.</strong> A waypoint whose required width sits far from the road's current width may never be selected. Age queue entries and raise their priority over time, or some contributor waits forever.</li>
+    <li><strong>Feasibility at submission.</strong> Check a custom template is reachable <em>at all</em> when it's submitted — width within global bounds, position inside the canvas — and reject it immediately with a clear reason. Queuing something that can never be placed is the worst outcome for the contributor.</li>
+    <li><strong>Issued templates are frozen.</strong> Once a template has been handed to a reserved slot it cannot change, or someone's half-finished drawing stops fitting. The algorithm plans forward only and never revises history.</li>
+    <li><strong>Deliberate imperfection.</strong> Pure shortest-path steering produces a road that looks mechanical. Add bounded randomness to the curve between waypoints — the site is called <em>The Long And Winding Road</em>, and a road that only bends when it has a reason to is the wrong road.</li>
+  </ul>
+
+  <div class="note">
+    <span class="h">Worth saying plainly</span>
+    <p>This algorithm is the strongest portfolio artefact in the project. Everything else here is careful, conventional web engineering done well; this is a constrained path-planning problem with a real aesthetic objective, arising naturally from the product rather than bolted on. When it's built, it deserves a written explanation with diagrams — that write-up will be worth more than the rest of the front page put together.</p>
+  </div>
+
+  <h3>4.4 · Section height</h3>
+  <p>Store the artwork's pixel dimensions on the model and reserve space from them before the image loads:</p>
+  <pre><code>&lt;li class="road-section" style="--ar: {{ section.width }} / {{ section.height }}"&gt;
+  &lt;figure class="road-art" style="aspect-ratio: var(--ar)"&gt;</code></pre>
+  <p>Zero layout shift, and — more importantly — the loader can compute the height of a section it has not fetched yet, which is what makes placeholder-based unloading possible later. The allowed height range is a decision for Damian; §12.2 sets out what actually constrains it, which turns out not to be aesthetics.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">05</div>
+  <h2>Components</h2>
+
+  <h3>5.1 · Masthead</h3>
+  <p>The logo is coming later, so build the slot now and fill it with type. Wrap it in the page's only <code>&lt;h1&gt;</code>; when the SVG arrives, inline it (not <code>&lt;img&gt;</code>) with <code>role="img"</code> and a <code>&lt;title&gt;</code> reading "The Long And Winding Road", so it can take <code>currentColor</code> and invert with the theme.</p>
+  <p>A roughly 4:3 stacked wordmark is a tall object for a masthead. Reserve the box with <code>aspect-ratio</code> from day one so the swap doesn't reflow the page, and cap its height in viewport units on small screens — otherwise the road starts below the fold on a phone, which is the one thing the front page cannot afford.</p>
+  <p>The theme control sits top-right, quiet, as a three-state group (System / Light / Dark) — a <code>fieldset</code> of radios styled as a segmented control, keyboard-operable and correctly announced without ARIA gymnastics. Default is System.</p>
+
+  <h3>5.2 · The head tile</h3>
+  <p>"Add a section" is not a button floating above the road — it is the first tile of the chain, and the road begins inside it. A short stub descends and terminates at whatever the current top section's <code>entry_*</code> anchors are, so it joins the road exactly like any other pair. The whole tile is one <code>&lt;a&gt;</code>.</p>
+  <p>This is where the page's single flourish goes: on hover and focus the stub extends downward a few units and the tile's ground shifts to <code>--accent</code> at low opacity. 180ms, transform only, reduced-motion safe. Nothing else on the page animates on hover.</p>
+
+  <h3>5.3 · Road section</h3>
+  <p>Semantically an ordered list — the road <em>is</em> a sequence and the numbers are load-bearing. Slot 1 sits at the bottom, so the list counts down the page:</p>
+  <pre><code>&lt;ol class="road" reversed&gt;
+  &lt;li class="road-section" value="1631"&gt;
+    &lt;span class="road-index" aria-hidden="true"&gt;#1631&lt;/span&gt;
+    &lt;figure class="road-art"&gt;
+      &lt;img src="…" alt="" width="1600" height="1200" decoding="async" loading="lazy"&gt;
+      &lt;figcaption class="road-meta"&gt;…&lt;/figcaption&gt;
+    &lt;/figure&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+  <p>The numeral is <code>aria-hidden</code> because <code>&lt;li value&gt;</code> already conveys position; without that, every section announces its number twice.</p>
+
+  <h4>Where artwork meets wall</h4>
+  <p>Because the artwork is opaque and unthemed, the vertical edges of the column are a hard boundary between someone's drawing and the page. Left raw it reads as an accident, particularly in dark mode. The fix is a hairline rather than a frame: a 1px <code>--rule</code> line down each side of the artwork column, continuous for the whole road rather than per-section. It reads as a hanging rail, costs nothing, and keeps every section visually seated without touching the images themselves.</p>
+
+  <h3>5.4 · Section metadata</h3>
+  <p>Title, author, description, actions — set as plain modern UI, not as a label object. Aligned to the top of its section rather than vertically centred, with <code>position: sticky</code> inside the section so that on a tall drawing it stays with you as you scroll past.</p>
+
+  <h4>Replacing the clamp script</h4>
+  <p>Delete the <code>ResizeObserver</code>. The description clamps to a fixed line count in pure CSS, and overflow becomes disclosure rather than truncation:</p>
+  <pre><code>.road-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}</code></pre>
+  <p>Clamping to the image height was the wrong target anyway — it made the amount of a stranger's writing you could read depend on how tall they happened to draw. A fixed six lines plus "Read more" is more consistent, more legible, and costs zero JavaScript and zero layout reads per scroll. Field maximums should be set from this layout and then enforced on the backend: roughly 70 characters for a title, 40 for an author name, and 600 for a description are the numbers this design supports comfortably.</p>
+
+  <h3>5.5 · Vacant and reserved slots</h3>
+  <p>Two states, both rendered as chrome rather than artwork, both satisfying the chain contract by drawing the connecting road themselves.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>State</th><th>Treatment</th><th>Behaviour</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vacant</strong></td><td><code>--paper-2</code> ground, connecting road stroked in <code>--ink-3</code>, label "This stretch is unbuilt"</td><td>The whole tile is a link into the reservation flow. Real target, real focus state.</td></tr>
+      <tr><td><strong>Reserved</strong></td><td>Same, road stroked in <code>--ochre</code>, label "Reserved — being drawn"</td><td>Not a link. Announces that someone is working on it, which is a stronger social signal than an empty gap.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Both must carry their state as text, not colour alone. Both are ordinary <code>&lt;li&gt;</code> items in the list with their slot number, so numbering stays continuous and the loader treats them like any other section.</p>
+
+  <h3>5.6 · The end of the road</h3>
+  <p>The chain terminates at slot 1 with a title card — "The End", in the manner of an old film. It is the one place the design is allowed to be openly fond of itself. It is also the only fixed landmark on an otherwise unbounded page, which makes it worth linking to: a persistent "Jump to the end of the road" control in the masthead.</p>
+  <p>That control is not a nicety. An infinite list makes everything below it permanently unreachable by keyboard, which is a genuine WCAG failure rather than a nitpick. The corollary is that <strong>nothing essential may live below the road</strong> — no footer navigation, no legal links. Those belong in the masthead or on their own pages.</p>
+
+  <h3>5.7 · Actions</h3>
+  <p>Small uppercase mono text controls in <code>--ink-2</code> at the foot of the metadata block. <strong>Always visible</strong> — never hover-revealed, which fails keyboard users, touch users and the 2.2 target-size rule simultaneously.</p>
+  <p>Confirmed: <em>Report</em>, which opens a dialog asking for a category and free text. Both permalinks belong here too — one to the section's own page and one that jumps to it in place — and they should be a single <em>Share</em> control that exposes both rather than two competing links.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">06</div>
+  <h2>Responsive behaviour</h2>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Width</th><th>Layout</th></tr></thead>
+    <tbody>
+      <tr><td class="m">≥ 1024px</td><td>Full three-track spine. Numeral left, artwork centre, metadata right. Everything visible at all times.</td></tr>
+      <tr><td class="m">640–1023px</td><td>Left flank collapses; the numeral moves inline above the title. Metadata stays beside the artwork.</td></tr>
+      <tr><td class="m">&lt; 640px</td><td>Artwork goes full-bleed. Metadata becomes a disclosure drawer beneath each section, closed by default.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>6.1 · The mobile disclosure</h3>
+  <p>Issue #1 describes the sections above and below tweening apart to make room. There is a subtlety worth designing around: if space opens <em>above</em> the tapped section, the thing the reader just touched slides out from under their thumb. So <strong>open downward only</strong>. The tapped section's top edge never moves; the drawer grows below it and pushes everything underneath down. Same visual effect, no disorientation, and no scroll-restoration code to get wrong.</p>
+
+  <pre><code>.road-drawer { display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease-out; }
+.road-section[data-expanded] .road-drawer { grid-template-rows: 1fr; }
+.road-drawer > div { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .road-drawer { transition-duration: 1ms; }
+}</code></pre>
+
+  <p>The <code>0fr → 1fr</code> transition animates to auto height, is cheap, and retargets cleanly when interrupted — the "elegantly cancellable" requirement satisfied by construction rather than by bookkeeping.</p>
+
+  <ul>
+    <li>The trigger is a real <code>&lt;button&gt;</code> wrapping the artwork, carrying <code>aria-expanded</code> and <code>aria-controls</code>.</li>
+    <li>Accordion behaviour — one open at a time — with the previously open section collapsing in the same frame.</li>
+    <li>Drawer content is <strong>always in the DOM</strong>, only visually collapsed. Never <code>hidden</code>, never <code>display: none</code>, so it stays findable by in-page search and correctly announced.</li>
+    <li>Don't move focus on expand; the drawer follows the button in DOM order, so the next Tab lands in it naturally.</li>
+    <li><code>&lt;details name="road"&gt;</code> gives exclusive-accordion behaviour with no JS and is worth a prototype, but its animation story is still uneven across browsers — the button plus grid-rows route is the safe default.</li>
+  </ul>
+</section>
+
+<section class="sec">
+  <div class="sec-no">07</div>
+  <h2>Accessibility</h2>
+  <p class="lede">Target is WCAG 2.2 AA, self-imposed and verified rather than assumed. Two things make this harder than average: it is an unbounded list, and its content is an image supplied by a stranger that the site has agreed not to alter.</p>
+
+  <h4>Structure</h4>
+  <ul>
+    <li>Skip link to the road as the first focusable element.</li>
+    <li>Exactly one <code>&lt;h1&gt;</code> (the masthead). Section titles are <code>&lt;h2&gt;</code>. No level skipped.</li>
+    <li>The road is <code>&lt;ol reversed&gt;</code>; each section an <code>&lt;li value="N"&gt;</code> containing a <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code>.</li>
+    <li>One <code>&lt;header&gt;</code>, one <code>&lt;main&gt;</code>, one <code>&lt;footer&gt;</code>. The prototype's duplicate <code>&lt;main&gt;</code> must not return.</li>
+  </ul>
+
+  <h4>Alt text, explained plainly</h4>
+  <p>The first draft asked this badly. Here is the actual choice. Every <code>&lt;img&gt;</code> needs an <code>alt</code> attribute. It can either describe the picture, or it can be <em>empty</em> — <code>alt=""</code> — which tells a screen reader "skip this image, it isn't the content". Empty is not the same as missing: a missing <code>alt</code> makes screen readers read out the filename, which is the worst outcome.</p>
+  <p><strong>Recommendation: <code>alt=""</code> on the artwork, with the caption carrying the meaning.</strong> The author has already written a title and a description of their own drawing, and that text sits in the <code>&lt;figcaption&gt;</code> immediately after the image. A screen reader user reaches it as ordinary text. Duplicating it into <code>alt</code> would make them hear it twice.</p>
+  <p>If a moderator later adds a description, put it in the <code>alt</code> then. Do not auto-generate <code>alt</code> by concatenating the title and description — that is exactly the double-announcement problem. And never ship a placeholder like <code>alt="image1"</code>, which is worse than empty.</p>
+
+  <h4>Contrast, given the site does not control the artwork</h4>
+  <p>WCAG contrast requirements apply to text and interface, not to photographs or artwork. Since the site never overlays text on a section image, the artwork is out of scope — which is the technical reason the "don't restyle the canvas" decision costs nothing in compliance terms. Everything the site <em>does</em> control still has to pass: 4.5:1 for body text, 3:1 for large text and UI boundaries, checked in both themes.</p>
+
+  <h4>Unbounded list</h4>
+  <ul>
+    <li><code>aria-busy="true"</code> on the list while a batch is in flight.</li>
+    <li>A polite live region announcing loaded ranges after each batch — not on every scroll event.</li>
+    <li>A "jump to the end of the road" control, because the bottom of the list is otherwise unreachable.</li>
+    <li>A no-JS path (§8), which also makes the road crawlable.</li>
+    <li>Never set <code>overflow-anchor: none</code> on the road — browser scroll anchoring is doing useful work.</li>
+  </ul>
+
+  <h4>Visual and interaction</h4>
+  <ul>
+    <li><code>:focus-visible</code> ring at 2px <code>--accent</code> with 2px offset, contrast-checked against both grounds.</li>
+    <li>Targets ≥ 44×44 CSS px (2.2 AA requires 24; take 44).</li>
+    <li>Reflow to 320px and zoom to 400% with no horizontal scrolling.</li>
+    <li>No information by colour alone — vacant and reserved slots carry text labels.</li>
+    <li>Full <code>prefers-reduced-motion</code> path.</li>
+  </ul>
+
+  <h4>Verification</h4>
+  <p>axe-core in CI against a page rendered with ~50 sections; Lighthouse accessibility ≥ 95; and one manual screen-reader pass per platform, exercising expand, collapse and a scroll-triggered load. Automated tools catch roughly a third of real failures — the manual pass is the one that matters. Free readers: <strong>Orca</strong> (preinstalled on most Linux desktops, so available immediately), <strong>NVDA</strong> (Windows, free and open source), <strong>VoiceOver</strong> (built into macOS and iOS), <strong>TalkBack</strong> (built into Android). Between a Linux machine and a phone you can cover three of the four at no cost.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">08</div>
+  <h2>Images, performance, and what the loader needs</h2>
+  <p class="lede">The loader is not designed yet, and the page structure is meant to come first and define what it works with. This section is that contract. The artwork column is also now essentially the entire page weight, so the image pipeline matters more than everything else combined.</p>
+
+  <h3>8.1 · Image format</h3>
+  <p>The plan currently says the uploads will "probably be JPEGs". <strong>JPEG is the wrong default for this content.</strong> It has no transparency and its block-based compression produces visible ringing around the hard edges and flat colour that hand-drawn sections are made of — exactly the artefacts you'd notice on a black road line against a flat field.</p>
+  <p>Since every upload has to be processed server-side anyway — dimensions validated, anchors checked, aspect ratio constrained — transcoding is nearly free to add at the same point:</p>
+  <ul>
+    <li><strong>Accept</strong> PNG, JPEG and WebP on upload. Keep the contributor's original untouched.</li>
+    <li><strong>Serve</strong> AVIF with a WebP fallback via <code>&lt;picture&gt;</code>. Both are supported across all current major browsers, and AVIF is dramatically better than JPEG on flat-colour illustration.</li>
+    <li><strong>Generate</strong> two or three widths and use <code>srcset</code>/<code>sizes</code>, since <code>--road-w</code> varies from about 280px to 544px.</li>
+    <li><strong>Strip EXIF</strong> on re-encode. Phone photos carry GPS coordinates, and a project that wants minimal data should not be republishing a contributor's location.</li>
+    <li><strong>Guard the decoder.</strong> Set <code>Image.MAX_IMAGE_PIXELS</code>, cap upload size, and validate dimensions before processing — a decompression bomb is the standard attack against any service that accepts images.</li>
+  </ul>
+  <p>Pillow is sufficient at this scale and is already a Django dependency for <code>ImageField</code>. If throughput ever becomes a problem, <code>pyvips</code> is several times faster at a fraction of the memory, but starting there would be premature.</p>
+
+  <div class="note">
+    <span class="h">On people disliking WebP</span>
+    <p>The complaint is real but it is about <em>saving</em>, not viewing: someone right-clicks an image, gets a <code>.webp</code>, and finds their older software won't open it. Nobody objects to WebP they never have to handle.</p>
+    <p>That maps cleanly onto a fix. Serve AVIF/WebP for <em>display</em>, where the bandwidth saving is the whole point, and give each section an explicit <strong>Download</strong> action that hands over the contributor's original file in the format they uploaded. That's better than the status quo in both directions — visitors get fast pages, and anyone who actually wants the artwork gets a real PNG or JPEG rather than whatever the browser happened to cache. It also fits the permissive-licence intent: if the work is meant to be reusable, make it properly downloadable rather than something to be extracted from a page.</p>
+  </div>
+
+  <h3>8.2 · What the loader requires from the markup</h3>
+  <ul>
+    <li><strong>One markup source.</strong> A single <code>_section.html</code> partial renders both the server-side first page and every subsequently loaded batch. Return rendered HTML fragments from the server rather than JSON — it keeps markup in one place and removes client-side templating entirely.</li>
+    <li><strong>Height before content.</strong> Dimensions on the model, <code>aspect-ratio</code> on the container, so a section can be sized before it is fetched.</li>
+    <li><strong>A cursor, not a page number.</strong> Paginate on slot number (<code>?before=1631</code>), never on offset — offsets shift when a slot is filled or removed mid-scroll and silently duplicate or skip sections. Note this leaks nothing: the slot number is printed on every section as <code>#1631</code>, so it is already public. The UUID protects the permalink, not the ordering.</li>
+    <li><strong>Offscreen sections cost nothing.</strong> <code>content-visibility: auto</code> with <code>contain-intrinsic-size</code> on every section. Measure whether this removes the need for explicit unloading before building unloading.</li>
+    <li><strong>A no-JS path is still available</strong>, despite the UUID decision — see the note below.</li>
+    <li><strong>If the URL updates on scroll</strong>, use <code>history.replaceState</code>, throttled — <code>pushState</code> would stack an entry per section and destroy the back button.</li>
+  </ul>
+
+  <h3>8.3 · Budget</h3>
+  <p>First load under 100KB of CSS and JS compressed, CLS of 0 at all times, and 60fps scrolling with 200 sections in the DOM. Removing DaisyUI and the clamp script gets most of the way there before anything is optimised. Artwork is excluded from that budget and governed instead by lazy loading and format: only the first two or three sections should be fetched eagerly, with <code>fetchpriority="high"</code> on the first and <code>loading="lazy"</code> on everything below the fold.</p>
+
+  <div class="note warn">
+    <span class="h">UUID permalinks don't actually force JS-only pagination</span>
+    <p>UUID URLs are a sound choice — they stop anyone walking <code>/1</code>, <code>/2</code>, <code>/3</code> to enumerate every section, and they cost nothing. But the conclusion drawn from them, that JS pagination therefore becomes <em>required</em>, doesn't follow, and it's worth separating the two.</p>
+    <p>A no-JS "next" link is just an anchor whose href carries a cursor: <code>?before=1631</code>, or <code>?before=&lt;uuid&gt;</code> if you'd rather. Following it returns the next batch. That grants a scraper nothing extra, because they can only get batch <em>n+1</em> by first having batch <em>n</em> — exactly the same walk a scroller performs. Enumeration was the thing UUIDs prevented, and a cursor link doesn't reintroduce it.</p>
+    <p>Meanwhile requiring JS buys close to nothing defensively: a headless browser is a few lines of Python, and anyone scraping seriously already uses one. So the cost lands entirely on people using screen readers, search crawlers, and anyone on a flaky connection — while the determined scraper is unaffected.</p>
+    <p><strong>What actually reduces load</strong> is the boring set: cache at the edge, rate-limit per IP, and publish the bulk export you already intend to provide, so anyone wanting the dataset takes the cheap path rather than crawling. A documented dump plus a permissive licence removes the incentive far more effectively than any technical barrier.</p>
+    <p>Going JS-only anyway is a legitimate call — it is less to build. If you do, at minimum keep the individual section pages server-rendered and crawlable, so sections remain findable and shareable even when the road itself isn't walkable without JavaScript.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-no">09</div>
+  <h2>Technical decisions</h2>
+
+  <h3>9.1 · Tokens and theming</h3>
+  <p>Define the palette, type and scale once in Tailwind v4's <code>@theme</code> block. That publishes them as both CSS custom properties and Tailwind utilities, so <code>bg-paper</code> and <code>var(--color-paper)</code> stay in sync from one source.</p>
+  <pre><code>@theme {
+  --color-paper: #F6F8F6;
+  --color-ink:   #14181A;
+  --color-accent:#1E5B3E;
+  --font-display: "Fraunces", var(--font-serif);
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));</code></pre>
+  <p>Theme is set via <code>data-theme</code> on <code>&lt;html&gt;</code> with a small <strong>synchronous inline</strong> script in <code>&lt;head&gt;</code> reading <code>localStorage</code> then <code>matchMedia</code>. It must be inline and blocking, or the page flashes the wrong theme on every load.</p>
+
+  <h3>9.2 · Sass</h3>
+  <p>Sass appeared in the brief because it is the CSS tooling one of you already knows, not because anything needs it — that is a completely reasonable reason to have written it down, and it deserves a real answer rather than a preference.</p>
+  <p><strong>Recommendation: don't add Sass.</strong> Not because Sass is bad, but because the three things people reach for it for are now native:</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Sass feature</th><th>Modern equivalent</th></tr></thead>
+    <tbody>
+      <tr><td>Variables (<code>$brand</code>)</td><td>CSS custom properties — and unlike Sass variables these are live at runtime, so they can respond to <code>data-theme</code>. Sass variables are compiled away and cannot.</td></tr>
+      <tr><td>Nesting</td><td>Native CSS nesting, supported in every current browser. <code>postcss-nested</code> is already installed as a belt-and-braces fallback.</td></tr>
+      <tr><td>Partials and <code>@use</code></td><td><code>@import</code> in the PostCSS chain, which the project already does.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The worry behind the question — "we may need custom CSS where Tailwind doesn't reach" — is correct, and the answer is simply a <code>components/</code> directory of plain <code>.css</code> files imported into the bundle. Everything in this document that isn't a utility (the spine grid, the numeral outline, the drawer transition) lives there. It is ordinary CSS, nested, using the same tokens, and it requires no extra build step.</p>
+  <p>Worth knowing if Tailwind is unfamiliar: <strong>v4 is configured in CSS, not in a JavaScript config file.</strong> The <code>@theme</code> block above is the entire configuration surface. Someone who knows CSS well is much closer to knowing Tailwind v4 than they would have been with v3.</p>
+
+  <h3>9.3 · DaisyUI</h3>
+  <p>Flagged as the other contributor's call, so this is the case rather than a decision. DaisyUI is currently installed, emitting about twenty colour tokens into the bundle, and used by zero classes in the template.</p>
+  <p>The tension is that DaisyUI's value is pre-built components with a consistent look, and a consistent look is precisely what §2 rules out — its default styling is the generic register the project is explicitly avoiding. It also ships a parallel token system (<code>--color-base-*</code>, <code>--color-primary</code>) that will sit awkwardly beside the <code>@theme</code> tokens above, and two sources of truth for colour is a reliable source of drift.</p>
+  <p>The honest middle path, if it stays: use DaisyUI <em>only</em> for interactive primitives that are genuinely fiddly to build accessibly — the report dialog, the theme switcher — and never for the road, the metadata or the masthead. If it isn't being used for that, removing it is free.</p>
+
+  <h3>9.4 · JavaScript approach</h3>
+  <p>The interactivity on this page amounts to two things: a disclosure accordion and a scroll-triggered loader. That is a small surface, and it should stay small.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Option</th><th>Cost</th><th>What it gives</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vanilla ES modules</strong></td><td>~150 lines of DOM code; no build step, no dependency</td><td>Full control, nothing to learn that isn't transferable, best fit for a hand-rolled loader</td><td><strong>Recommended</strong></td></tr>
+      <tr><td><strong>htmx</strong> (~14KB)</td><td>One script tag</td><td>Server returns HTML fragments; <code>hx-trigger="revealed"</code> is close to infinite scroll for free. Very Django-idiomatic.</td><td>Worth a prototype — it does almost exactly this job</td></tr>
+      <tr><td><strong>Alpine.js</strong> (~15KB)</td><td>One script tag</td><td>Declarative state in markup; tidies the accordion if the vanilla version gets messy</td><td>Reasonable later, unnecessary now</td></tr>
+      <tr><td><strong>React / Vue</strong></td><td>Build toolchain, hydration, templates duplicated between Django and JS, client routing</td><td>Nothing this project needs</td><td><strong>Not recommended</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>To answer the question behind the question: React and Vue exist to keep a complex client-side UI in sync with client-side state. This site's state lives in a database and is rendered by Django, so a framework would mean maintaining the same section markup twice and fighting for the server-rendered, no-JS, crawlable behaviour that comes free otherwise. They are excellent tools aimed at a different shape of problem. Vanilla DOM work here is also the more useful thing to have learned — framework knowledge dates, <code>IntersectionObserver</code> doesn't.</p>
+  <p>One specific pointer for the loader: use <code>IntersectionObserver</code> on a sentinel element near the foot of the list rather than listening to <code>scroll</code>. It fires off the main thread, needs no throttling, and is the standard approach.</p>
+
+  <h4>What htmx actually is, since it has a reputation</h4>
+  <p>htmx is one <code>&lt;script&gt;</code> tag of about 14KB. There is no npm, no build step, no compiler and no new language — you add attributes to HTML you already have. That's the whole of it. The infinite scroll, complete, is:</p>
+  <pre><code>&lt;div hx-get="/road/?before=1631"
+     hx-trigger="revealed"
+     hx-swap="outerHTML"&gt;&lt;/div&gt;</code></pre>
+  <p>"When this element is scrolled into view, GET that URL and replace me with whatever comes back." The server returns a rendered Django fragment — the same <code>_section.html</code> partial the first page already uses. No JSON, no client-side templates, no state to keep in sync.</p>
+  <p>The reason it can feel alarming is that it puts behaviour in markup, which looks superficially like the inline <code>onclick</code> attributes everyone is taught to avoid. The difference is that <code>onclick</code> embedded arbitrary JavaScript in HTML, whereas htmx attributes are a fixed declarative vocabulary — closer in spirit to what <code>&lt;form action method&gt;</code> has always done, generalised to any element and any verb. It is less magic than a framework, not more.</p>
+  <p><strong>None of which means you should use it.</strong> The vanilla equivalent is roughly forty lines, and writing them teaches you the platform APIs — the better outcome if you're deliberately trying to get stronger at frontend. The honest recommendation: spend twenty minutes on the htmx docs so it becomes a known quantity rather than a scary one, then go vanilla as planned. If the loader later grows awkward — request cancellation, out-of-band updates, optimistic swaps — you'll recognise the moment htmx would have saved you, and adopting it then is a small change rather than a rewrite.</p>
+
+  <h3>9.5 · Browser baseline</h3>
+  <p>Edge, Chrome, Safari and Firefox, current and one previous version. <strong>Internet Explorer needs no consideration whatsoever</strong> — Microsoft ended support in June 2022 and it is absent from the modern web platform entirely. Everything recommended here (native nesting, <code>content-visibility</code>, <code>:focus-visible</code>, <code>grid-template-rows</code> transitions, AVIF, <code>IntersectionObserver</code>) is available across that baseline. The one item worth a manual check is <code>-webkit-line-clamp</code>, which is universally supported but still prefixed.</p>
+
+  <h3>9.6 · File structure</h3>
+  <pre><code>theme/static_src/src/
+  styles.css          @import tailwind, tokens, base, components
+  tokens.css          @theme block — palette, type, scale
+  base.css            resets, focus, typography defaults
+  components/
+    road.css          spine grid, section, chain seams
+    meta.css          metadata block, actions
+    masthead.css      logo slot, theme switch, head tile
+    slot.css          vacant and reserved states
+
+render/templates/render/
+  base.html           landmarks, theme script, font preloads
+  index.html          masthead + road + first batch
+  _section.html       ONE section — used by SSR and the loader
+  _slot.html          vacant / reserved tile
+  _meta.html
+  _head_tile.html
+
+render/static/render/
+  js/road.js          ES module, deferred: disclosure + loader</code></pre>
+  <p>Note the <code>render/</code> subdirectory inside both <code>templates/</code> and <code>static/</code>. The current flat layout lets any app shadow <code>index.html</code>; namespacing is the standard Django fix and costs one directory.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">10</div>
+  <h2>Build order</h2>
+  <p class="lede">Each phase ends at a checkable state. The critical path changed with the move to templates: nothing now waits on artwork, because the geometry is data the server issues rather than a constant the drawings must share.</p>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 0</span><span class="phase-t">Foundations</span><span class="phase-dep">no dependencies</span></div>
+    <p>Tokens in <code>@theme</code>. Self-hosted fonts. Rebuild <code>base.html</code> with landmarks, skip link, no-flash theme script and the three-state theme control. Namespace templates and static under <code>render/</code>. Delete the eight orphaned images. Resolve DaisyUI.</p>
+    <p class="exit"><b>Exit</b> Theme toggles across system/light/dark with no flash; every colour comes from a token; CSS bundle smaller than today.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 1</span><span class="phase-t">The spine</span><span class="phase-dep">needs: anchor units agreed</span></div>
+    <p>Three-track grid with <code>--road-w</code>. The four anchor fields and the fraction convention. Dimensions on the model and <code>aspect-ratio</code> reservation. Retire the 100-column grid and the positional class names. Build against fixture data with hand-set anchors — no real artwork required.</p>
+    <p class="exit"><b>Exit</b> Eight fixture sections with deliberately varied anchors join without a visible step at 320px, 768px, 1440px and 2560px, in both themes, with CLS of zero.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 2</span><span class="phase-t">Metadata, numeral, slots</span><span class="phase-dep">needs: 1</span></div>
+    <p>Metadata block with sticky positioning and CSS line-clamp. Outlined numeral. Action row. Vacant and reserved slot tiles. <code>ResizeObserver</code> deleted.</p>
+    <p class="exit"><b>Exit</b> No JavaScript runs on scroll or resize; a chain containing vacant and reserved slots still joins correctly throughout.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 3</span><span class="phase-t">Masthead and head tile</span><span class="phase-dep">needs: 1</span></div>
+    <p>Masthead with a reserved 4:3 logo box filled by type for now, <code>&lt;h1&gt;</code>, add-a-section head tile with its road stub, jump-to-the-end control, and the end-of-road title card.</p>
+    <p class="exit"><b>Exit</b> Swapping the placeholder for a real SVG causes no reflow; the head tile is keyboard-operable and joins the top section exactly.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 4</span><span class="phase-t">Mobile disclosure</span><span class="phase-dep">needs: 2</span></div>
+    <p>Downward-opening drawer, accordion behaviour, <code>aria-expanded</code>, reduced-motion path.</p>
+    <p class="exit"><b>Exit</b> Rapid repeated taps never desync the animation; content is reachable at every width; state announced correctly by a screen reader.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 5</span><span class="phase-t">Loader readiness</span><span class="phase-dep">needs: 1, 2 · real model from #3</span></div>
+    <p>Extract <code>_section.html</code>, wire it to real data, add <code>content-visibility</code>, build the cursor-based <code>?before=</code> endpoint and its no-JS links, add the live region and <code>aria-busy</code> plumbing. This is the handoff point for Issue #7.</p>
+    <p class="exit"><b>Exit</b> 200 sections scroll at 60fps; the page works fully with JavaScript disabled; one partial renders both paths.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 6</span><span class="phase-t">Image pipeline</span><span class="phase-dep">needs: upload flow</span></div>
+    <p>Server-side validation, anchor checking, transcode to AVIF and WebP, <code>srcset</code> generation, EXIF stripping, decoder guards.</p>
+    <p class="exit"><b>Exit</b> A malformed, oversized or wrongly-anchored upload is rejected with a useful message; a valid one is served at a third of its original bytes.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><span class="phase-n">PHASE 7</span><span class="phase-t">Audit gate</span><span class="phase-dep">needs: all</span></div>
+    <p>axe-core in CI, Lighthouse, manual screen-reader pass, 320px reflow and 400% zoom, contrast verification in both themes.</p>
+    <p class="exit"><b>Exit</b> Zero axe violations; Lighthouse accessibility ≥ 95; clean manual passes on at least two platforms.</p>
+  </div>
+
+  <div class="note">
+    <span class="h">Start here</span>
+    <p>Phase 0 has no dependencies and can begin immediately. The only thing genuinely gating Phase 1 is agreeing how anchors are expressed — fractions of width is the recommendation, and it is a fifteen-minute conversation rather than a design exercise. Nothing waits on the logo, and nothing waits on artwork.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-no">11</div>
+  <h2>Security</h2>
+  <p class="lede">A stated priority, and correctly so — a site that accepts image uploads and email addresses from the public has a real attack surface, and getting it right is both necessary and demonstrably good portfolio material.</p>
+
+  <h3>11.1 · Django configuration</h3>
+  <p>Run <code>manage.py check --deploy</code> before every deploy. It is built in, takes seconds, and checks most of the following automatically:</p>
+  <ul>
+    <li><code>SECRET_KEY</code> out of source and into an environment variable. It is currently hardcoded in <code>settings.py</code> and in git history — <strong>rotate it before launch</strong>, since anything committed is compromised.</li>
+    <li><code>DEBUG = False</code> in production, and a populated <code>ALLOWED_HOSTS</code>. Debug pages leak settings, SQL and stack traces.</li>
+    <li><code>SECURE_HSTS_SECONDS</code>, <code>SECURE_SSL_REDIRECT</code>, <code>SESSION_COOKIE_SECURE</code>, <code>CSRF_COOKIE_SECURE</code>, <code>SECURE_CONTENT_TYPE_NOSNIFF</code>.</li>
+    <li>A Content Security Policy. Easy here because the design self-hosts fonts and ships no third-party scripts — a strict policy costs nothing and blocks entire categories of injection.</li>
+  </ul>
+
+  <h3>11.2 · Uploads</h3>
+  <p>The riskiest surface, and the one worth being thorough about.</p>
+  <ul>
+    <li><strong>Never trust the extension or the declared content type.</strong> Verify by decoding the file, which Django's <code>ImageField</code> does via Pillow.</li>
+    <li><strong>Guard the decoder.</strong> Set <code>Image.MAX_IMAGE_PIXELS</code> and cap upload size. A 20KB PNG can declare dimensions that expand to gigabytes in memory — the classic decompression bomb.</li>
+    <li><strong>If the in-browser tool outputs SVG, do not store it as SVG.</strong> SVG is an XML document that can carry <code>&lt;script&gt;</code>, and serving a user-supplied one from your own origin is stored cross-site scripting. Either rasterise it server-side or sanitise it hard. Accepting raster uploads only, as planned, sidesteps this entirely.</li>
+    <li><strong>Serve uploads with <code>X-Content-Type-Options: nosniff</code></strong>, and ideally from a separate domain or bucket so that even a mis-served file cannot run in the site's origin. Object storage handles this naturally.</li>
+    <li><strong>Re-encode everything.</strong> Transcoding to AVIF/WebP for display incidentally strips anything hidden in the original's metadata.</li>
+    <li><strong>Randomise stored filenames.</strong> Never use the contributor's filename on disk or in a URL.</li>
+  </ul>
+
+  <h3>11.3 · Abuse and rate limiting</h3>
+  <ul>
+    <li>Rate-limit reservations, submissions and reports — at Cloudflare, in Django (<code>django-ratelimit</code>), or both.</li>
+    <li><strong>Honeypot field</strong> (§12.5 explains it) plus a minimum-time check on the submission form.</li>
+    <li>Email verification tokens should be signed and time-limited — use Django's <code>signing</code> module rather than storing guessable tokens.</li>
+    <li>Enumeration: keep responses identical whether or not an email is already known to the system, or the form becomes an oracle for which addresses have contributed.</li>
+  </ul>
+
+  <h3>11.4 · Data</h3>
+  <p>IP addresses are personal data under UK GDPR. If they're stored for rate limiting, set a short retention period and truncate or hash them. The project's instinct to collect as little as possible is the right one and is much easier to hold from the start than to retrofit — every field not collected is a field that cannot leak.</p>
+
+  <h3>11.5 · Dependencies</h3>
+  <p>Turn on Dependabot in the repository settings — it is free, takes one click, and opens PRs for vulnerable packages. Add <code>pip-audit</code> to CI. Between them that is most of the supply-chain risk handled for about ten minutes of setup.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-no">12</div>
+  <h2>Decisions for Damian</h2>
+  <p class="lede">Five questions that need frontend judgement rather than a recommendation from outside the project. Each is written to be readable on its own, with the tradeoffs laid out and a starting suggestion — but the call belongs to whoever is going to live with the layout.</p>
+
+  <h3>12.1 · How wide is the artwork column?</h3>
+  <p>One number has to serve a 320px phone and a 2560px monitor. Because anchors are stored as fractions of width, <em>any</em> width works mechanically — the road joins up regardless. What's actually at stake is legibility and consistency of presentation.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Approach</th><th>Upside</th><th>Downside</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Full-bleed on mobile, clamped on desktop</strong><br><code>clamp(18rem, 44vw, 32rem)</code></td><td>Uses all of a phone screen; leaves room for the numeral and metadata on desktop</td><td>The same artwork renders roughly twice as large on desktop as on a phone</td></tr>
+      <tr><td><strong>Constant rendered width everywhere</strong> (e.g. 480px)</td><td>Every visitor sees the work at the same size — the most gallery-like answer</td><td>Wastes most of a phone screen and looks lost on a large monitor</td></tr>
+      <tr><td><strong>Proportional throughout</strong><br><code>min(90vw, 32rem)</code></td><td>Simplest rule; scales smoothly</td><td>Nothing anchors the reading size; wide screens get a very large column</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The binding constraint is the desktop flanks: the metadata needs about 36ch and the numeral needs room beside it, so <code>--road-w</code> can't exceed roughly 45% of the viewport without squeezing them. The second consideration is that contributors will draw at whatever size they're working — so <strong>publish a canonical authoring width</strong> (1600px is a sensible number) so people know what they're designing for, and accept that phones show it smaller. Fine detail and any hand-drawn text will not survive a 320px render, and the guidelines should say so.</p>
+
+  <h3>12.2 · What are the height limits?</h3>
+  <p>Width is fixed and height varies "within limits" — this is about what sets those limits. Expressed as a ratio to the width, since that's the stable quantity.</p>
+  <ul>
+    <li><strong>Maximum</strong> is an experience question. Past roughly 1.5× the width, a single section takes more than a screen on desktop and several swipes on mobile, and the road stops reading as continuous — you're looking at one picture rather than travelling along something.</li>
+    <li><strong>Minimum is the interesting one, and it isn't aesthetic.</strong> It's set by the metadata block. Title, author, a few lines of description and the action row need roughly 180–220px of vertical space beside the artwork on desktop. Any section shorter than that has metadata taller than its own artwork, which breaks the sticky positioning and pushes text into the neighbouring row. So the floor is a layout constraint, not a taste one — somewhere around 0.4× the width.</li>
+  </ul>
+  <p>Starting suggestion: <strong>height between 0.4× and 1.5× the width</strong>. At a 1600px canonical authoring width that's 640px to 2400px. Worth building the layout first and then measuring, since the metadata block's real height is the thing that decides it.</p>
+
+  <h3>12.3 · DaisyUI: keep or remove?</h3>
+  <p>Currently installed, emitting about twenty colour tokens into the bundle, used by zero classes in the template. Held open pending your input.</p>
+  <p>The case against: its default component look is precisely the generic register §2 is trying to avoid, and it ships a parallel token system (<code>--color-base-*</code>, <code>--color-primary</code>) that will sit awkwardly beside the <code>@theme</code> tokens in §9.1. Two sources of truth for colour drift reliably.</p>
+  <p>The case for: accessible interactive primitives are genuinely fiddly to build well, and there are two here — the report dialog and the theme switcher. If you want it for those, the workable compromise is to use DaisyUI <em>only</em> there and never for the road, the metadata or the masthead. If it isn't being used for that, removing it is free and shrinks the bundle.</p>
+
+  <h3>12.4 · Should the URL update as you scroll?</h3>
+  <p>The appeal is that a reload returns you to the same stretch of road, and that sharing the address shares your position. The implementation caveat matters more than the decision: use <code>history.replaceState</code>, throttled to something like every 500ms or every few sections. <code>pushState</code> would stack a history entry per section and comprehensively destroy the back button — a genuinely common bug in infinite-scroll implementations.</p>
+  <p>The other consideration is that it competes with the per-section permalink. If every section already has a shareable UUID URL, a scroll-updating address may be redundant. Worth deciding which of the two is the primary sharing mechanism rather than shipping both and hoping.</p>
+
+  <h3>12.5 · No-JS fallback: build it or not?</h3>
+  <p>§8 argues that UUID permalinks don't actually force JS-only pagination, and that a cursor link costs little and preserves crawlability and screen-reader access. That said, it <em>is</em> extra surface to build and test, and skipping it is a defensible call for a two-person project.</p>
+  <p>If you skip it, the one thing worth keeping is server-rendered individual section pages, so sections stay findable and shareable even when the road itself needs JavaScript. That's most of the SEO and accessibility benefit for a fraction of the work.</p>
+
+  <div class="note">
+    <span class="h">Not a decision, just an explanation — honeypots</span>
+    <p>Mentioned in §11.3 and flagged as unfamiliar. A honeypot is a form field that real people never see and never fill in: you add an innocuous-looking input (say <code>website</code>), hide it in CSS, and set <code>tabindex="-1"</code> and <code>aria-hidden="true"</code> so keyboards and screen readers skip past it. Naive bots fill in every field they find, so any submission arriving with that field non-empty is discarded. Zero friction for real users, no accessibility cost when hidden properly, and it catches a surprising amount of low-effort spam. Pair it with a timestamp check — a form completed in under two seconds wasn't completed by a person. Neither stops a determined attacker, which is what the captcha and rate limiting are for; honeypots just remove the cheap noise for free. <code>django-honeypot</code> implements it if you'd rather not hand-roll.</p>
+  </div>
+</section>
+
+<footer>
+  <div>Design plan · The Long And Winding Road · Revision 3 · 18 August 2026</div>
+  <div>Reviewed against branch Issue-7 @ e70b1ac. Seam coordinates measured directly from the committed PNGs. Rebuilt on the answers to both question sets.</div>
+  <div>Companion document: the project bible, which records what is decided, what is proposed here, and what remains open.</div>
+</footer>
+
+</div>
