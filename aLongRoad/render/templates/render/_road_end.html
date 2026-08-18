@@ -1,0 +1,9 @@
+{% comment %}
+Only ever included by _batch.html when get_batch() returns no cursor —
+i.e. once slot 1 has actually been reached. It cannot appear earlier
+because the server never emits it earlier; there is no flag for the
+client to get out of sync with.
+{% endcomment %}
+<li class="road-end">
+    <p>The End</p>
+</li>

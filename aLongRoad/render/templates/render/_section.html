@@ -1,0 +1,34 @@
+{% load static %}
+{% comment %}
+ONE section — the loader (Issue #7) fetches this same markup from
+road_batch_view, so it must never be duplicated in JavaScript
+(project-bible.md §8, docs/claude/README.md §4).
+{% endcomment %}
+<li class="road-section" value="{{ s.slot_number }}" data-slot="{{ s.slot_number }}"
+    data-entry-l="{{ s.entry_l }}" data-entry-r="{{ s.entry_r }}"
+    data-exit-l="{{ s.exit_l }}" data-exit-r="{{ s.exit_r }}"
+    style="--ar: {{ s.width }} / {{ s.height }}; --ar-num: {{ s.ratio }};">
+    <span class="road-index" aria-hidden="true">#{{ s.slot_number|stringformat:"04d" }}</span>
+
+    <figure class="road-art">
+        <img src="{% static s.image %}" alt="" width="{{ s.width }}" height="{{ s.height }}"
+             loading="lazy" decoding="async">
+        <button type="button" class="road-disclosure-trigger" aria-controls="drawer-{{ s.slot_number }}">
+            <span class="sr-only">Show details for section #{{ s.slot_number|stringformat:"04d" }}</span>
+        </button>
+    </figure>
+
+    <figcaption class="road-meta">
+        <div class="road-drawer" id="drawer-{{ s.slot_number }}">
+            <div>
+                <h2 class="road-title">{{ s.title }}</h2>
+                <p class="road-author">By {{ s.author_name }}</p>
+                <p class="road-desc">{{ s.description }}</p>
+                <ul class="road-actions">
+                    <li><a href="#">Share</a></li>
+                    <li><button type="button">Report</button></li>
+                </ul>
+            </div>
+        </div>
+    </figcaption>
+</li>

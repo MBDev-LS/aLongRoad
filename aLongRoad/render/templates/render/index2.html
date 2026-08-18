@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}The Long And Winding Road{% endblock %}
+
+{% block font_preloads %}
+{% comment %}
+Self-hosted Fraunces / Instrument Sans / IBM Plex Mono preload links land
+here once the subset woff2 files are added — tokens.css already reads
+var(--font-display) / var(--font-sans) / var(--font-mono) everywhere, so
+that is a font-file change only, not a template or CSS one.
+{% endcomment %}
+{% endblock %}
+
+{% block skip_link %}
+<a class="skip-link" href="#road">Skip to the road</a>
+{% endblock %}
+
+{% block body_content %}
+<header class="masthead">
+    <h1 class="masthead-mark"><span class="masthead-mark-text">The Long And<br>Winding Road</span></h1>
+    <nav class="masthead-nav" aria-label="Road navigation">
+        <a class="masthead-jump" href="{% url 'index2' %}?before={{ jump_to_end_before }}">Jump to the end of the road</a>
+    </nav>
+</header>
+
+<main id="road" class="road-stack">
+    <a href="#" class="road-head" aria-label="Add a new section to the road">
+        <span class="road-head-art">
+            <svg class="road-seam" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+                <path class="road-head-stub"
+                      d="M 0.35 0 L {{ top_section.entry_l }} 1 M 0.65 0 L {{ top_section.entry_r }} 1" />
+            </svg>
+            <span class="road-head-label">Add a new section</span>
+        </span>
+    </a>
+
+    <ol class="road" reversed aria-busy="false">
+        {% include "render/_batch.html" %}
+    </ol>
+
+    {% comment %}
+    Sentinel and status region for the loader (Issue #7) to observe and
+    announce into — not wired to anything yet.
+    {% endcomment %}
+    <div class="road-sentinel" aria-hidden="true"></div>
+    <p class="road-status" role="status"></p>
+</main>
+
+<footer class="road-foot"></footer>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'render/js/road.js' %}"></script>
+{% endblock %}

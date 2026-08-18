@@ -2,7 +2,7 @@
 
 **Purpose.** This is the single onboarding brief for anyone — human or LLM agent — joining this project. It records what the project *is*, what has been *decided*, what has been *proposed but not signed off*, and what is *still unknown*. Read it in full before making changes.
 
-**Revision 3** — 18 August 2026, against branch `Issue-1` @ `d47ba39`. Rebuilt on both answered question sets.
+**Revision 4** — 18 August 2026, against branch `Issue-1` @ `5e5d149`. Corrects stale facts (§2.1, §2.2), records DaisyUI's removal as answered (§9.3, §14), and adds `render/templates/render/index2.html` — a reference build of the spine, chain contract, CSS-only clamp, mobile drawer and loader markup contract, alongside the untouched original prototype.
 
 **This document is for both Louis and Damian**, and for any agent working on the project. Items needing Damian's specific input are collected in design plan §12 and flagged in §14 here.
 
@@ -54,12 +54,12 @@ The companion **design plan** (`docs/claude/design-plan.html`) covers visual dir
 
 - A Django 6.0 project (`aLongRoad/`) with two apps: `render` (the front page) and `theme` (django-tailwind's generated app).
 - One view, `render.views.index_view`, rendering `index.html` at `/`. No context data — page content is hardcoded HTML.
+- A second, namespaced view pair, `render.views.index2_view` and `road_batch_view`, rendering `render/index2.html` at `/v2/` and `/v2/road/`. Both read `render/fixtures.py` (14 fixture sections, no database) rather than a model — Issue #3 hasn't landed yet (§4). `index.html` is untouched; the two pages exist side by side for comparison. See §8 and design-plan.html §8.2 for what `index2.html` implements of the loader's markup contract.
 - **No models.** `render/models.py` is empty. Nothing is stored or served from a database.
 - **No tests.** `render/tests.py` is the stock stub.
-- Two road drawings, `Road_1.png` and `Road_2.png`, hardcoded as example sections. **Both are throwaway test art** and need no migration.
-- Eight orphaned images in `render/static/images/` from earlier experiments (`aha.jpg`, `gamer_cat.jpg`, `hippo.png`, `image1–3.png`, `lightning.png`, `pebble.png`) — ~390KB, unreferenced. Safe to delete.
-- `test.py` generates `test_for_loading.json`: 250 dummy records under `section_data`, each with `sequential_id`, `author_name`, `description`, `title`. Scratch fixture data.
-- `dynamicLoaderDesign.txt` contains two lines of an unfinished sketch. The loader is **not** designed yet (§8).
+- Two road drawings, `Road_1.png` and `Road_2.png`, used as example sections by both `index.html` and the `index2.html` fixtures. **Both are throwaway test art** and need no migration.
+- Five orphaned images in `render/static/images/` from earlier experiments (`aha.jpg`, `gamer_cat.jpg`, `hippo.png`, `lightning.png`, `pebble.png`) — unreferenced, safe to delete. `image1–3.png` are no longer orphaned: `render/fixtures.py` uses them as placeholder artwork for `index2.html`'s demo sections.
+- `test.py`, `test_for_loading.json` and `dynamicLoaderDesign.txt`, previously listed here, do not exist in the working tree or in `git ls-files`. Corrected 18 Aug 2026 `[flagged by Claude, 2026-08-18]`.
 
 ### 2.2 Stack
 
@@ -70,7 +70,7 @@ The companion **design plan** (`docs/claude/design-plan.html`) covers visual dir
 | Backend | Django 6.0, SQLite (dev default, empty) |
 | CSS | Tailwind CSS 4.1 via `django-tailwind` 4.4 |
 | CSS build | PostCSS 8.5 + `postcss-cli`, with `postcss-nested` and `postcss-simple-vars` |
-| Component lib | DaisyUI 5.3 — installed, emitting ~20 colour tokens, **used by zero classes** |
+| Component lib | **Removed** by Damian (`d47ba39`). Was DaisyUI 5.3, installed but used by zero classes. |
 | Sass | **Not installed.** Decision in §9.2. |
 | JS | None, apart from one inline `<script>` in the template |
 
@@ -373,13 +373,13 @@ The worry behind the question — *"we may need custom CSS where Tailwind doesn'
 
 **Worth knowing if Tailwind is unfamiliar:** v4 is configured **in CSS**, not in a JavaScript config file. The `@theme` block is the entire configuration surface. Someone who knows CSS well is much closer to knowing Tailwind v4 than they'd have been with v3.
 
-### 9.3 DaisyUI — Damian's call
+### 9.3 DaisyUI — removed
 
-`[OPEN]` Currently installed, emitting ~20 colour tokens, used by zero classes.
+`[DECIDED]` Damian removed it (`d47ba39`, 18 Aug 2026). Absent from `package.json` and the compiled bundle. Previously open in §14; removed from that list per `docs/claude/README.md` §5.2 now that it's answered. Kept below as the record of the reasoning.
 
-The tension: DaisyUI's value is pre-built components with a consistent look, and that look is precisely the generic register §1 rules out. It also ships a parallel token system (`--color-base-*`, `--color-primary`) that will sit awkwardly beside the `@theme` tokens, and two sources of truth for colour reliably drifts.
+The tension that motivated removal: DaisyUI's value is pre-built components with a consistent look, and that look is precisely the generic register §1 rules out. It also ships a parallel token system (`--color-base-*`, `--color-primary`) that would have sat awkwardly beside the `@theme` tokens, and two sources of truth for colour reliably drifts.
 
-Honest middle path if it stays: use it **only** for interactive primitives that are fiddly to build accessibly — the report dialog, the theme switcher — and never for the road, the metadata or the masthead. If it isn't used for that, removing it is free.
+The path not taken: use it **only** for interactive primitives that are fiddly to build accessibly — the report dialog, the theme switcher — and never for the road, the metadata or the masthead.
 
 ### 9.4 JavaScript approach
 
@@ -588,11 +588,11 @@ Most of the first two rounds are now answered. What remains, grouped by who need
 
 ### A. Needs Damian (design plan §12 sets each out in full, readable standalone)
 
-1. **How wide is the artwork column?** One number serves a 320px phone and a 2560px monitor. Anchors are fractions so any width works mechanically — what's at stake is legibility and consistency. The binding constraint is that desktop flanks need ~36ch for metadata, capping `--road-w` around 45% of viewport. Also needs a published **canonical authoring width** (1600px suggested) so contributors know what they're drawing for.
+1. **How wide is the artwork column?** One number serves a 320px phone and a 2560px monitor. Anchors are fractions so any width works mechanically — what's at stake is legibility and consistency. The binding constraint is that desktop flanks need ~36ch for metadata, capping `--road-w` around 45% of viewport. Also needs a published **canonical authoring width** (1600px suggested) so contributors know what they're drawing for. `render/theme/static_src/src/tokens.css` currently carries `--road-w: clamp(17.5rem, 42vw, 34rem)` as a provisional value pending this answer — that token is where to change it.
 2. **What are the height limits?** Expressed as a ratio to width. Maximum is an experience question — past ~1.5x width a section stops reading as part of a journey. **Minimum is set by the metadata block, not aesthetics**: title, author, description and actions need ~180-220px beside the artwork, so below ~0.4x width the metadata is taller than the art it describes. Suggested starting range: 0.4x to 1.5x.
-3. **DaisyUI — keep or remove?** Held open. Section 9.3 states both cases.
-4. **Should the URL update as you scroll?** If yes, `replaceState` throttled, never `pushState`. Also worth deciding whether this or the per-section permalink is the primary sharing mechanism.
-5. **No-JS fallback — build it or not?** Section 8.1 argues UUIDs don't force JS-only. Skipping it is defensible; if you do, keep individual section pages server-rendered.
+3. **Should the URL update as you scroll?** If yes, `replaceState` throttled, never `pushState`. Also worth deciding whether this or the per-section permalink is the primary sharing mechanism.
+4. **No-JS fallback — build it or not?** Section 8.1 argues UUIDs don't force JS-only. Skipping it is defensible; if you do, keep individual section pages server-rendered. `render/templates/render/index2.html` at `/v2/` is a working answer either way: it renders fully without JavaScript, so the fallback exists whether or not it's ultimately kept.
+5. **The `k/x` and `y/x` target ratios in `docs/design/Long Road Layout.drawio.pdf`.** The windowed-buffer loading diagram (assessed in design-plan.html §8.2a) is sound but the actual ratio values, the hysteresis scroll-distance threshold, and whether unloading is built at all (versus relying on `content-visibility: auto`, which may make it unnecessary) are unset. Frontend/UX judgement, so grouped with Damian's other calls. `[flagged by Claude, 2026-08-18]`
 
 ### B. Needs both of you
 
@@ -601,20 +601,21 @@ Most of the first two rounds are now answered. What remains, grouped by who need
 8. **Report destination.** The queue and notification model is decided; the delivery mechanism isn't. Options: Django admin queue only (simplest, no extra infrastructure); admin queue plus email to moderators (better response time); admin queue plus a Discord or Slack webhook (fastest, and free — a webhook POST is about five lines). Recommendation: start with the admin queue plus a webhook, since it needs no mail deliverability work.
 9. **Reservation length.** Undecided, hours to days, under a week. Must be admin-changeable, so ship it as a setting and defer the number.
 10. **Agent workflow conventions.** Whether Damian adopts the model-naming `Co-Authored-By: Claude <model>` commit trailer (currently only on Louis's commits) and points his own agent at `docs/claude/`. The shared-context scheme in `docs/claude/README.md` only works if both contributors follow it, so this needs agreeing rather than assuming. `[flagged by Claude/Louis, 2026-08-18]`
+11. **When does `index2.html` replace `index.html`?** `render/templates/render/index2.html` at `/v2/` exists alongside the original prototype (still at `/`) specifically so both can be compared before either is retired — see design-plan.html's Revision 4 note. Needs a decision on what "good enough to retire the original" means and who signs off. `[flagged by Claude, 2026-08-18]`
 
 ### C. Deferred by design, listed so they aren't forgotten
 
-11. **The routing algorithm** (section 5.4). Correctly deferred until the submission flow works. The constraints listed there are worth fixing before writing it.
-12. **Content guidelines and red lines.** Acknowledged as complicated and deferred — but note section 7.2: the pornography prohibition is load-bearing for avoiding age-assurance requirements, so that specific line needs to be explicit in the terms of service before launch even if the rest waits.
-13. **Draft handling on reservation expiry** (section 5.2). Tentative thinking recorded; not settled.
-14. **Custom-template queue insertion policy** (section 5.4). Depends on the routing algorithm.
-15. **Field length maximums.** Proposed at 70/40/600 characters; confirm once the layout exists.
-16. **Whether an email-verification-only account system** (letting contributors see past submissions) gets built later.
+12. **The routing algorithm** (section 5.4). Correctly deferred until the submission flow works. The constraints listed there are worth fixing before writing it.
+13. **Content guidelines and red lines.** Acknowledged as complicated and deferred — but note section 7.2: the pornography prohibition is load-bearing for avoiding age-assurance requirements, so that specific line needs to be explicit in the terms of service before launch even if the rest waits.
+14. **Draft handling on reservation expiry** (section 5.2). Tentative thinking recorded; not settled.
+15. **Custom-template queue insertion policy** (section 5.4). Depends on the routing algorithm.
+16. **Field length maximums.** Proposed at 70/40/600 characters; confirm once the layout exists.
+17. **Whether an email-verification-only account system** (letting contributors see past submissions) gets built later.
 
 ### D. Before launch, not yet started
 
-17. **The written documents** in section 7.6 — terms of service, privacy notice, children's access assessment, illegal-content risk assessment, CSAM protocol. Short documents, but genuinely the gate for a UK service accepting public image uploads.
-18. **`SECRET_KEY` rotation.** It is in git history, so it is compromised regardless of what happens next. Rotate before any deploy.
+18. **The written documents** in section 7.6 — terms of service, privacy notice, children's access assessment, illegal-content risk assessment, CSAM protocol. Short documents, but genuinely the gate for a UK service accepting public image uploads.
+19. **`SECRET_KEY` rotation.** It is in git history, so it is compromised regardless of what happens next. Rotate before any deploy.
 
 ## 15. Do not do these
 

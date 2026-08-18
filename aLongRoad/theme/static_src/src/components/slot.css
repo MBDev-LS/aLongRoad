@@ -1,0 +1,56 @@
+/* Vacant and reserved slot tiles. Both are ordinary <li> items carrying
+   their slot number, both draw their own connecting road so the chain
+   stays joined across a gap that has no artwork yet. Design plan §5.5,
+   bible §5.3. State is always carried as text, never colour alone. */
+
+.road-slot-art {
+  grid-column: 2;
+  position: relative;
+  aspect-ratio: var(--ar, 4 / 3);
+  background: var(--paper-2);
+}
+
+.road-slot-road {
+  stroke-width: 3;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.road-slot[data-state="vacant"] .road-slot-road {
+  stroke: var(--ink-3);
+}
+
+.road-slot[data-state="reserved"] .road-slot-road {
+  stroke: var(--ochre);
+}
+
+.road-slot-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+
+/* Vacant tiles are a real link into the reservation flow. */
+a.road-slot-art {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.road-slot-art:hover .road-slot-road,
+a.road-slot-art:focus-visible .road-slot-road {
+  stroke: var(--accent);
+}
+
+a.road-slot-art:hover .road-slot-label,
+a.road-slot-art:focus-visible .road-slot-label {
+  color: var(--accent);
+}

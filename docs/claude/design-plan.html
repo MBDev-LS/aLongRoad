@@ -174,20 +174,24 @@
 <div class="wrap">
 
 <header class="masthead">
-  <p class="eyebrow">Design plan · The Long And Winding Road · Revision 3</p>
+  <p class="eyebrow">Design plan · The Long And Winding Road · Revision 4</p>
   <h1>From prototype to a road worth walking</h1>
   <p class="standfirst">A design direction, a layout architecture, and a phased build order that takes the current two-row prototype to a polished front page — ready for the loading system to be written on top of it.</p>
   <p class="meta">
     <span>18 Aug 2026</span>
     <span>Issues #1 · #3 · #7</span>
-    <span>Branch Issue-7 @ e70b1ac</span>
-    <span>Rev 3: routing, UUIDs, decisions for Damian</span>
+    <span>Branch Issue-1 @ 5e5d149</span>
+    <span>Rev 4: stale-fact corrections, index2.html as a reference build</span>
   </p>
 </header>
 
 <section class="sec">
   <div class="sec-no">00</div>
   <h2>What changed in this revision</h2>
+  <div class="note new">
+    <span class="h">Added in revision 4 — a reference implementation</span>
+    <p><code>render/templates/render/index2.html</code> and its partials (<code>_batch.html</code>, <code>_section.html</code>, <code>_slot.html</code>, <code>_road_end.html</code>) now exist alongside the original prototype at <code>render/templates/index.html</code>, built against fixture data in <code>render/fixtures.py</code> and served at <code>/v2/</code>. It implements the spine (§4.1), the chain contract with a real bridging vacant slot (§4.2), CSS-only line clamping (§5.4 replacing the <code>ResizeObserver</code>), the downward-opening mobile drawer (§6.1), and the loader's markup contract — cursor pagination, one partial for both the server-rendered and fetched paths, and a terminator the server never emits early (§8.2). The loader itself (<code>IntersectionObserver</code>, batching) is not built; that stays Issue #7's work. Several findings below, and the DaisyUI question in §9.3/§12.3, are corrected against the repository as it now stands rather than as it stood at Revision 3.</p>
+  </div>
   <p class="lede">The first draft made two structural proposals. One was rejected and one was overtaken by information. Both changes improve the design, and both are load-bearing enough that the rest of the document is built on them rather than patched around them.</p>
 
   <div class="note new">
@@ -220,6 +224,10 @@
   <div class="find">
     <div class="find-head"><span class="find-id">1.2</span><span class="find-t">Section widths are inconsistent, so nothing can line up</span><span class="sev blocks">Blocks design</span></div>
     <p>Row one splits 25/50/25; row two splits 20/60/20. The first road renders at 50% of the viewport and the second at 60%, and both are stretched with <code>w-full h-full</code>, discarding their aspect ratios by different amounts. With a chained road this is fatal rather than untidy: if the artwork column is not one exact width for every section, no template can guarantee a join. §4.1 rebuilds the grid around a single width token.</p>
+    <div class="note new">
+      <span class="h">Update, 18 Aug 2026 [flagged by Claude, 2026-08-18]</span>
+      <p>The prototype now has a single row rather than two (<code>d47ba39</code>). The underlying problem this finding describes is unchanged and is exactly what motivated the shared-grid spine in §4.1 — kept here as the record of why.</p>
+    </div>
   </div>
 
   <div class="find">
@@ -241,6 +249,10 @@
   <div class="find">
     <div class="find-head"><span class="find-id">1.6</span><span class="find-t">The clamp script will not survive the loader</span><span class="sev shapes">Shapes design</span></div>
     <p>A <code>ResizeObserver</code> watches <code>&lt;body&gt;</code> and, on every fire, loops every image reading <code>offsetHeight</code> and <code>getComputedStyle</code>, then writes inline styles — a read-write-read layout thrash, O(n) in loaded sections, on an element whose height the loop itself changes. Invisible at two rows; a stutter on every scroll-triggered load at four hundred. §5.4 replaces it with no JavaScript at all.</p>
+    <div class="note new">
+      <span class="h">Update, 18 Aug 2026 [flagged by Claude, 2026-08-18]</span>
+      <p>The observer actually watches the images, not <code>&lt;body&gt;</code> — a leftover <code>const body</code> in the script is unused. Doesn't change the finding: it still never observes a section loaded after first paint, since <code>imageCollection</code> is a live collection nothing new triggers a callback on. §5.4's CSS-only clamp in <code>index2.html</code> removes the script entirely rather than fixing it.</p>
+    </div>
   </div>
 
   <div class="find">
@@ -256,6 +268,10 @@
   <div class="find">
     <div class="find-head"><span class="find-id">1.9</span><span class="find-t">Structural class names carry no meaning</span><span class="sev tidy">Housekeeping</span></div>
     <p><code>first-child</code> through <code>fourth-child</code> describe position in a tree that will change, shadow the real CSS pseudo-classes they're named after, and are load-bearing for the clamp script's <code>querySelector</code> calls. Separately <code>col-span-0</code> compiles to <code>grid-column: span 0</code>, which is invalid — browsers clamp it to 1. It does nothing; the neighbouring <code>hidden</code> is doing all the work.</p>
+    <div class="note new">
+      <span class="h">Resolved, 18 Aug 2026 [flagged by Claude, 2026-08-18]</span>
+      <p>Both are gone from the prototype (<code>fa2a549</code>). No action needed; kept as the record of what the audit caught.</p>
+    </div>
   </div>
 
   <div class="find">
@@ -708,6 +724,16 @@ section[n].exit_r == section[n+1].entry_r</code></pre>
     <li><strong>If the URL updates on scroll</strong>, use <code>history.replaceState</code>, throttled — <code>pushState</code> would stack an entry per section and destroy the back button.</li>
   </ul>
 
+  <h3>8.2a · The windowed-buffer loading system in <code>docs/design/Long Road Layout.drawio.pdf</code></h3>
+  <p><em>Added 18 Aug 2026 [flagged by Claude, 2026-08-18] — assessing a diagram that predates this document's §8 and was not yet folded in.</em> The diagram specifies a windowed loader: viewport height <code>x</code>, an above-viewport buffer <code>y</code>, a below-viewport buffer <code>k</code>, with loading and unloading driven toward constant target ratios <code>k/x</code> and <code>y/x</code>, plus a minimum total-scroll-since-last-action threshold so fast up-and-down scrolling doesn't thrash.</p>
+  <ul>
+    <li><strong>The ratio model is sound</strong>, and better specified than most hand-rolled infinite scrolls. Sizing the buffer relative to the viewport is the right variable — it decides whether a fast scroller ever sees blank space, and it adapts to a phone and a 4K monitor without separate numbers. The hysteresis threshold is a real solution to a real problem and is the part most implementations miss.</li>
+    <li><strong>It maps onto <code>IntersectionObserver</code> exactly.</strong> <code>rootMargin</code> accepts percentages resolved against the viewport, so <code>rootMargin: "0px 0px 150% 0px"</code> <em>is</em> the rule "load when the below-buffer falls under 1.5 viewports", evaluated off the main thread with no scroll handler and no throttling — satisfying this document's existing sentinel requirement above rather than conflicting with it. Because an observer fires only on threshold crossings, most of the hysteresis comes free; an in-flight guard plus <code>AbortController</code> covers the rest.</li>
+    <li><strong><code>k</code> and <code>y</code> in pixels are the right unit, and section counts fall out of them.</strong> Because dimensions are stored on the model, the number of sections needed to fill <code>k</code> pixels is computable rather than guessed — a batch size of "however many sections fill the buffer" beats a constant.</li>
+    <li><strong>Unloading is the riskier half and should be proven necessary before it's built.</strong> Removing a node above the viewport jumps the scroll position by its height unless it's replaced by a placeholder of identical height. <code>content-visibility: auto</code> with <code>contain-intrinsic-size</code> (above) already skips layout, paint and rendering for offscreen sections at zero JS cost and zero scroll-anchoring risk — measure whether that removes the need for unloading before committing to it. Recommendation: build the load half first, keep the height contract unloading would need, and treat unloading as a later, measured decision.</li>
+    <li><strong>Direction and termination.</strong> Slot 1 is at the bottom, so the trigger sentinel sits at the foot and the cursor is <code>?before=&lt;lowest slot rendered&gt;</code> — matching "Load Here" at the diagram's bottom. "The End" must not be reachable before the last batch has actually arrived: make it something the server only ever emits <em>instead of</em> a cursor, on the batch containing slot 1, rather than a client-evaluated flag. Then there is nothing to get out of sync — the loader stops because there's no cursor to follow, and the card exists because it arrived. <code>render/templates/render/_batch.html</code> implements exactly this.</li>
+  </ul>
+
   <h3>8.3 · Budget</h3>
   <p>First load under 100KB of CSS and JS compressed, CLS of 0 at all times, and 60fps scrolling with 200 sections in the DOM. Removing DaisyUI and the clamp script gets most of the way there before anything is optimised. Artwork is excluded from that budget and governed instead by lazy loading and format: only the first two or three sections should be fetched eagerly, with <code>fetchpriority="high"</code> on the first and <code>loading="lazy"</code> on everything below the fold.</p>
 
@@ -753,10 +779,14 @@ section[n].exit_r == section[n+1].entry_r</code></pre>
   <p>The worry behind the question — "we may need custom CSS where Tailwind doesn't reach" — is correct, and the answer is simply a <code>components/</code> directory of plain <code>.css</code> files imported into the bundle. Everything in this document that isn't a utility (the spine grid, the numeral outline, the drawer transition) lives there. It is ordinary CSS, nested, using the same tokens, and it requires no extra build step.</p>
   <p>Worth knowing if Tailwind is unfamiliar: <strong>v4 is configured in CSS, not in a JavaScript config file.</strong> The <code>@theme</code> block above is the entire configuration surface. Someone who knows CSS well is much closer to knowing Tailwind v4 than they would have been with v3.</p>
 
-  <h3>9.3 · DaisyUI</h3>
-  <p>Flagged as the other contributor's call, so this is the case rather than a decision. DaisyUI is currently installed, emitting about twenty colour tokens into the bundle, and used by zero classes in the template.</p>
-  <p>The tension is that DaisyUI's value is pre-built components with a consistent look, and a consistent look is precisely what §2 rules out — its default styling is the generic register the project is explicitly avoiding. It also ships a parallel token system (<code>--color-base-*</code>, <code>--color-primary</code>) that will sit awkwardly beside the <code>@theme</code> tokens above, and two sources of truth for colour is a reliable source of drift.</p>
-  <p>The honest middle path, if it stays: use DaisyUI <em>only</em> for interactive primitives that are genuinely fiddly to build accessibly — the report dialog, the theme switcher — and never for the road, the metadata or the masthead. If it isn't being used for that, removing it is free.</p>
+  <h3>9.3 · DaisyUI — removed</h3>
+  <div class="note new">
+    <span class="h">Resolved by Damian, 18 Aug 2026 (<code>d47ba39</code>)</span>
+    <p>Damian removed DaisyUI. It is absent from <code>package.json</code> and from the compiled bundle. The question below is kept as the record of the reasoning, not as something still open — see project-bible.md §9.3.</p>
+  </div>
+  <p><em>Below, as originally written, for the record:</em> flagged as the other contributor's call, so this was the case rather than a decision. DaisyUI was installed, emitting about twenty colour tokens into the bundle, and used by zero classes in the template.</p>
+  <p>The tension was that DaisyUI's value is pre-built components with a consistent look, and a consistent look is precisely what §2 rules out — its default styling is the generic register the project is explicitly avoiding. It also shipped a parallel token system (<code>--color-base-*</code>, <code>--color-primary</code>) that would have sat awkwardly beside the <code>@theme</code> tokens above, and two sources of truth for colour is a reliable source of drift.</p>
+  <p>The honest middle path, if it had stayed: use DaisyUI <em>only</em> for interactive primitives that are genuinely fiddly to build accessibly — the report dialog, the theme switcher — and never for the road, the metadata or the masthead.</p>
 
   <h3>9.4 · JavaScript approach</h3>
   <p>The interactivity on this page amounts to two things: a disclosure accordion and a scroll-triggered loader. That is a small surface, and it should stay small.</p>
@@ -808,6 +838,11 @@ render/templates/render/
 render/static/render/
   js/road.js          ES module, deferred: disclosure + loader</code></pre>
   <p>Note the <code>render/</code> subdirectory inside both <code>templates/</code> and <code>static/</code>. The current flat layout lets any app shadow <code>index.html</code>; namespacing is the standard Django fix and costs one directory.</p>
+
+  <div class="note new">
+    <span class="h">index2.html follows this closely, with three deliberate differences [flagged by Claude, 2026-08-18]</span>
+    <p><code>base.html</code> stayed at its existing <code>theme/templates/</code> path rather than moving under <code>render/templates/render/</code>, so <code>index.html</code> keeps resolving <code>{% extends 'base.html' %}</code> without being edited. It also doesn't yet gain the <code>&lt;header&gt;</code>/<code>&lt;main&gt;</code>/<code>&lt;footer&gt;</code> landmarks §5.1 describes — <code>index.html</code> supplies its own <code>&lt;main&gt;</code>, and a second one in the base would nest landmarks and break it. Those move into the base once <code>index.html</code> is retired. The page template is <code>index2.html</code>, not <code>index.html</code>, since the original stays in place for comparison (project-bible.md §14.B.11). <code>_meta.html</code> and <code>_head_tile.html</code> weren't split out — that markup doesn't repeat per batch the way <code>_section.html</code> and <code>_slot.html</code> do, so it's inlined in <code>index2.html</code> instead.</p>
+  </div>
 </section>
 
 <section class="sec">
@@ -936,10 +971,11 @@ render/static/render/
   </ul>
   <p>Starting suggestion: <strong>height between 0.4× and 1.5× the width</strong>. At a 1600px canonical authoring width that's 640px to 2400px. Worth building the layout first and then measuring, since the metadata block's real height is the thing that decides it.</p>
 
-  <h3>12.3 · DaisyUI: keep or remove?</h3>
-  <p>Currently installed, emitting about twenty colour tokens into the bundle, used by zero classes in the template. Held open pending your input.</p>
-  <p>The case against: its default component look is precisely the generic register §2 is trying to avoid, and it ships a parallel token system (<code>--color-base-*</code>, <code>--color-primary</code>) that will sit awkwardly beside the <code>@theme</code> tokens in §9.1. Two sources of truth for colour drift reliably.</p>
-  <p>The case for: accessible interactive primitives are genuinely fiddly to build well, and there are two here — the report dialog and the theme switcher. If you want it for those, the workable compromise is to use DaisyUI <em>only</em> there and never for the road, the metadata or the masthead. If it isn't being used for that, removing it is free and shrinks the bundle.</p>
+  <h3>12.3 · DaisyUI: keep or remove? — <span style="font-weight:400">answered, removed</span></h3>
+  <div class="note new">
+    <span class="h">Answered by Damian, 18 Aug 2026 (<code>d47ba39</code>)</span>
+    <p>Removed. Not in <code>package.json</code>, not in the compiled bundle. See §9.3 above and project-bible.md §9.3.</p>
+  </div>
 
   <h3>12.4 · Should the URL update as you scroll?</h3>
   <p>The appeal is that a reload returns you to the same stretch of road, and that sharing the address shares your position. The implementation caveat matters more than the decision: use <code>history.replaceState</code>, throttled to something like every 500ms or every few sections. <code>pushState</code> would stack a history entry per section and comprehensively destroy the back button — a genuinely common bug in infinite-scroll implementations.</p>
@@ -956,8 +992,8 @@ render/static/render/
 </section>
 
 <footer>
-  <div>Design plan · The Long And Winding Road · Revision 3 · 18 August 2026</div>
-  <div>Reviewed against branch Issue-7 @ e70b1ac. Seam coordinates measured directly from the committed PNGs. Rebuilt on the answers to both question sets.</div>
+  <div>Design plan · The Long And Winding Road · Revision 4 · 18 August 2026</div>
+  <div>Reviewed against branch Issue-1 @ 5e5d149. Corrects five stale facts against the repository as it now stands and records <code>index2.html</code> as a working reference build of §4–§8's contract.</div>
   <div>Companion document: the project bible, which records what is decided, what is proposed here, and what remains open.</div>
 </footer>
 

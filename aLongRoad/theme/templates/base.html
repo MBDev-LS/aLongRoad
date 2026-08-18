@@ -4,13 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% comment %}
+    Synchronous, blocking, and as early as possible: must run before the
+    page paints or the theme flashes on load. Default state is "system"
+    and needs no attribute — the prefers-color-scheme media query in
+    tokens.css already handles that case. This only has work to do when
+    the visitor previously made an explicit light/dark choice.
+    Design plan §9.1.
+    {% endcomment %}
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('theme');
+                if (stored === 'light' || stored === 'dark') {
+                    document.documentElement.setAttribute('data-theme', stored);
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <title>{% block title %}{% endblock %}</title>
 
     {% tailwind_css %}
 
+    {% block font_preloads %}{% endblock %}
     {% block head_content %}{% endblock %}
 </head>
-<body class="font-sans leading-normal tracking-normal bg-neutral-900 text-neutral-100">
+<body>
+
+    {% block skip_link %}{% endblock %}
 
     {% block body_content %}
     {% endblock %}

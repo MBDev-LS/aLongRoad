@@ -1,0 +1,136 @@
+/* Section metadata: title, author, description, action row, and the mobile
+   disclosure drawer. Design plan §5.4, §6.1. */
+
+.road-meta {
+  grid-column: 3;
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  max-inline-size: 36ch;
+  padding-inline: 1.25rem;
+  padding-block: 0.5rem;
+}
+
+@media (width < 1024px) {
+  .road-meta {
+    position: static;
+  }
+}
+
+@media (width < 640px) {
+  .road-meta {
+    grid-column: 1;
+    max-inline-size: none;
+    padding-inline: 0;
+  }
+}
+
+.road-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.road-author {
+  margin: 0.25rem 0 0;
+  font-size: var(--text-meta);
+  color: var(--ink-2);
+}
+
+.road-desc {
+  margin: 0.75rem 0 0;
+  font-size: var(--text-body);
+  color: var(--ink-2);
+  overflow-wrap: break-word;
+}
+
+/* Fixed line-count clamp. Replaces the ResizeObserver entirely — no reads,
+   no writes, no JS. Bible §15.6. */
+.road-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}
+
+.road-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.road-actions button,
+.road-actions a {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.road-actions button:hover,
+.road-actions a:hover {
+  color: var(--accent);
+}
+
+/* Mobile disclosure trigger — a full-cover button laid over the artwork
+   (a sibling of the <img>, not a wrapper around it: display:none on a
+   wrapping button would take its child image with it). Present in the DOM
+   at every width but only occupies space, and only takes tab focus, below
+   640px; above that the metadata sits beside the art at all times and
+   there is nothing to toggle. road.js wires the click handling and mirrors
+   state into aria-expanded only while this is actually reachable. */
+.road-disclosure-trigger {
+  display: none;
+}
+
+@media (width < 640px) {
+  .road-disclosure-trigger {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+}
+
+/* Drawer default is OPEN — this is progressive enhancement, not a baseline
+   requirement. With no JS every section is readable at every width, which
+   is content parity (bible §11) even though the chain visually breaks on a
+   phone. road.js sets [data-enhanced] on .road once it has wired up the
+   buttons, and only then does the collapsed state apply. */
+.road-drawer {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 260ms ease-out;
+}
+
+.road[data-enhanced] .road-section:not([data-expanded]) .road-drawer {
+  grid-template-rows: 0fr;
+}
+
+.road-drawer > div {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .road-drawer {
+    transition-duration: 1ms;
+  }
+}

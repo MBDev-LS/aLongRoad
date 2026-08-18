@@ -1,0 +1,193 @@
+/* The spine: the three-track grid every section shares, the hairline rails
+   that make the join continuous, the outlined numeral, the head tile and
+   terminus. Design plan §4.1, §5.1–5.3, §5.6. */
+
+.road-stack {
+  position: relative;
+  max-width: 100rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+/* Hairline rails either side of the artwork column — one continuous line
+   for the whole road, not a border per section (bible §15.4). Hidden
+   full-bleed below 640px. */
+.road-stack::before,
+.road-stack::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+  z-index: 1;
+}
+.road-stack::before { left: calc(50% - var(--road-w) / 2); }
+.road-stack::after { left: calc(50% + var(--road-w) / 2); }
+
+@media (width < 640px) {
+  .road-stack::before,
+  .road-stack::after {
+    display: none;
+  }
+}
+
+.road {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.road-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--road-w) minmax(0, 1fr);
+  align-items: start;
+  /* Zero gap, zero border, zero radius — the chain breaks otherwise (bible §15.4). */
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  content-visibility: auto;
+  contain-intrinsic-size: auto calc(var(--road-w) * var(--ar-num, 1));
+}
+
+@media (width < 640px) {
+  .road-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.road-index {
+  grid-column: 1;
+  align-self: center;
+  justify-self: end;
+  padding-inline-end: 1rem;
+  font: var(--text-numeral) / 1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--ink-3);
+  transition: color 160ms ease-out, -webkit-text-stroke-color 160ms ease-out;
+  user-select: none;
+}
+
+.road-section:is(:hover, :focus-within, [data-expanded]) .road-index {
+  color: var(--accent);
+  -webkit-text-stroke-color: var(--accent);
+}
+
+@media (width < 640px) {
+  .road-index {
+    display: none;
+  }
+}
+
+.road-art {
+  grid-column: 2;
+  position: relative;
+  margin: 0;
+}
+
+.road-art img {
+  width: 100%;
+  height: auto;
+  /* Reserve intrinsic space before decode — never w-full h-full stretching. */
+  aspect-ratio: var(--ar);
+}
+
+/* The chain seam: an inline SVG drawn from this slot's entry anchors to its
+   exit anchors, used by vacant/reserved placeholders (components/slot.css)
+   and available to any section that wants to render its own connector. */
+.road-seam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* The head tile: "add a section" is the first tile of the chain, not a
+   button floating above it. Its stub descends to the top section's entry
+   anchors. Design plan §5.2. */
+.road-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--road-w) minmax(0, 1fr);
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (width < 640px) {
+  .road-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.road-head-art {
+  grid-column: 2;
+  position: relative;
+  aspect-ratio: 8 / 3;
+  background: var(--paper-2);
+  transition: background-color 180ms ease-out;
+}
+
+.road-head:is(:hover, :focus-visible) .road-head-art {
+  background: color-mix(in oklab, var(--accent) 12%, var(--paper-2));
+}
+
+.road-head-stub {
+  stroke: var(--ink-3);
+  stroke-width: 3;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 180ms ease-out, d 180ms ease-out;
+}
+
+.road-head:is(:hover, :focus-visible) .road-head-stub {
+  stroke: var(--accent);
+}
+
+.road-head-label {
+  grid-column: 2;
+  justify-self: center;
+  align-self: center;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+
+/* Terminus card — "The End". Only ever present in the document once the
+   final batch has actually arrived; see render/_road_end.html. */
+.road-end {
+  display: grid;
+  place-items: center;
+  padding-block: clamp(4rem, 12vw, 8rem);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--ink-2);
+}
+
+.road-cursor {
+  display: grid;
+  place-items: center;
+  padding-block: 2rem;
+}
+
+.road-cursor a {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.25em;
+}
+
+.road-sentinel {
+  height: 1px;
+}

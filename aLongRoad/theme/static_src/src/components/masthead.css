@@ -1,0 +1,49 @@
+/* Masthead: the page's only h1, the reserved logo box, and the jump-to-the-
+   end control. Design plan §5.1. Theme control itself is a follow-up —
+   tokens and the no-flash script are already in place for it. */
+
+.masthead {
+  max-width: 100rem;
+  margin-inline: auto;
+  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 3rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.masthead-mark {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  max-height: 22vh;
+  display: flex;
+  align-items: center;
+}
+
+.masthead-mark-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.masthead-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.masthead-jump {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.25em;
+}
+
+.masthead-jump:hover {
+  color: var(--accent);
+}
