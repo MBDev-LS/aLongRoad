@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import shutil
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 TAILWIND_APP_NAME = 'theme'
 
-NPM_BIN_PATH = 'npm.cmd'
+NPM_BIN_PATH = shutil.which('npm')
 
 # Application definition
 
