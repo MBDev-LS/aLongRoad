@@ -2,7 +2,7 @@
 
 **Purpose.** This is the single onboarding brief for anyone — human or LLM agent — joining this project. It records what the project *is*, what has been *decided*, what has been *proposed but not signed off*, and what is *still unknown*. Read it in full before making changes.
 
-**Revision 3** — 18 August 2026, against branch `Issue-7` @ `e70b1ac`. Rebuilt on both answered question sets.
+**Revision 3** — 18 August 2026, against branch `Issue-1` @ `d47ba39`. Rebuilt on both answered question sets.
 
 **This document is for both Louis and Damian**, and for any agent working on the project. Items needing Damian's specific input are collected in design plan §12 and flagged in §14 here.
 
@@ -20,7 +20,7 @@ Every substantive statement carries a status marker. **Respect them.**
 
 If you hit something this document does not cover, **do not fill the gap with a plausible guess.** Add it to §14 and raise it.
 
-The companion **design plan** (`docs/design-plan.html`) covers visual direction, layout architecture, component specs and the phased build order with the reasoning behind each. This bible is the reference; the design plan is the argument.
+The companion **design plan** (`docs/claude/design-plan.html`) covers visual direction, layout architecture, component specs and the phased build order with the reasoning behind each. This bible is the reference; the design plan is the argument.
 
 ---
 
@@ -578,9 +578,7 @@ The trap to avoid is treating the board as the source of truth. The issues are t
 
 ### 13.5 Where these documents live
 
-`[DECIDED]` Both documents live in `docs/`, and **`docs/` is gitignored for now** — they are not to be pushed to GitHub yet.
-
-> **Consequence:** Damian will not receive these through the repository. Share them directly, or remove the ignore rule when you're ready.
+`[DECIDED]` These documents live in `docs/claude/`, a **tracked, human-readable workspace** for agent-authored plans and context. It is not gitignored — it is pushed to GitHub as part of the normal history. See `docs/claude/README.md` for the framework governing how agents use this space: what may be created here, how attribution works, and the discipline that keeps the project from sprawling.
 
 ---
 
@@ -602,20 +600,21 @@ Most of the first two rounds are now answered. What remains, grouped by who need
 7. **Hosting and database.** Recommendations in sections 12.1 and 12.2 — Django on a VPS/PaaS with Cloudflare in front, Postgres in production. To discuss together.
 8. **Report destination.** The queue and notification model is decided; the delivery mechanism isn't. Options: Django admin queue only (simplest, no extra infrastructure); admin queue plus email to moderators (better response time); admin queue plus a Discord or Slack webhook (fastest, and free — a webhook POST is about five lines). Recommendation: start with the admin queue plus a webhook, since it needs no mail deliverability work.
 9. **Reservation length.** Undecided, hours to days, under a week. Must be admin-changeable, so ship it as a setting and defer the number.
+10. **Agent workflow conventions.** Whether Damian adopts the model-naming `Co-Authored-By: Claude <model>` commit trailer (currently only on Louis's commits) and points his own agent at `docs/claude/`. The shared-context scheme in `docs/claude/README.md` only works if both contributors follow it, so this needs agreeing rather than assuming. `[flagged by Claude/Louis, 2026-08-18]`
 
 ### C. Deferred by design, listed so they aren't forgotten
 
-10. **The routing algorithm** (section 5.4). Correctly deferred until the submission flow works. The constraints listed there are worth fixing before writing it.
-11. **Content guidelines and red lines.** Acknowledged as complicated and deferred — but note section 7.2: the pornography prohibition is load-bearing for avoiding age-assurance requirements, so that specific line needs to be explicit in the terms of service before launch even if the rest waits.
-12. **Draft handling on reservation expiry** (section 5.2). Tentative thinking recorded; not settled.
-13. **Custom-template queue insertion policy** (section 5.4). Depends on the routing algorithm.
-14. **Field length maximums.** Proposed at 70/40/600 characters; confirm once the layout exists.
-15. **Whether an email-verification-only account system** (letting contributors see past submissions) gets built later.
+11. **The routing algorithm** (section 5.4). Correctly deferred until the submission flow works. The constraints listed there are worth fixing before writing it.
+12. **Content guidelines and red lines.** Acknowledged as complicated and deferred — but note section 7.2: the pornography prohibition is load-bearing for avoiding age-assurance requirements, so that specific line needs to be explicit in the terms of service before launch even if the rest waits.
+13. **Draft handling on reservation expiry** (section 5.2). Tentative thinking recorded; not settled.
+14. **Custom-template queue insertion policy** (section 5.4). Depends on the routing algorithm.
+15. **Field length maximums.** Proposed at 70/40/600 characters; confirm once the layout exists.
+16. **Whether an email-verification-only account system** (letting contributors see past submissions) gets built later.
 
 ### D. Before launch, not yet started
 
-16. **The written documents** in section 7.6 — terms of service, privacy notice, children's access assessment, illegal-content risk assessment, CSAM protocol. Short documents, but genuinely the gate for a UK service accepting public image uploads.
-17. **`SECRET_KEY` rotation.** It is in git history, so it is compromised regardless of what happens next. Rotate before any deploy.
+17. **The written documents** in section 7.6 — terms of service, privacy notice, children's access assessment, illegal-content risk assessment, CSAM protocol. Short documents, but genuinely the gate for a UK service accepting public image uploads.
+18. **`SECRET_KEY` rotation.** It is in git history, so it is compromised regardless of what happens next. Rotate before any deploy.
 
 ## 15. Do not do these
 
@@ -645,5 +644,8 @@ Most of the first two rounds are now answered. What remains, grouped by who need
 
 ## 16. Companion documents
 
-- **`docs/design-plan.html`** — visual direction, layout architecture, component specs, the chain diagram, and the phased build order with reasoning. Open it in a browser.
-- Both files live in `docs/`, which is currently gitignored.
+- **`docs/claude/design-plan.html`** — visual direction, layout architecture, component specs, the chain diagram, and the phased build order with reasoning. Open it in a browser.
+- **`docs/claude/README.md`** — process for this workspace: what may be created here, how blame and attribution work, code-sprawl discipline, and the dos and don'ts. **Agents should read it before this document.**
+- **`docs/claude/project-bible.pdf`**, **`docs/claude/long-road-open-questions.pdf`** — frozen exports for sharing. Point-in-time snapshots, not maintained. A fresh export replaces the file at the same name.
+
+Everything lives in `docs/claude/`, which is tracked and pushed to GitHub. **This list is the authoritative index of the folder** — anything added or removed there is reflected here in the same commit (README §2).
