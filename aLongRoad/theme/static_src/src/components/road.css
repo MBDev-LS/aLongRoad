@@ -160,9 +160,19 @@
 }
 
 .road-head-art {
+  display: block;
+  width: 100%;
   grid-column: 2;
   position: relative;
-  aspect-ratio: 8 / 3;
+  aspect-ratio: 9;
+  /* aspect-ratio alone can size the tile shorter than the label's own
+     padding at --road-w's floor (280px / 9 ≈ 31px vs 2rem of padding),
+     which forces the centred text to overflow unevenly. This floor keeps
+     the tile tall enough for the label at any width. min-height beating
+     the aspect-ratio-derived height also makes the ratio transfer back
+     into a *wider* auto width unless width is pinned explicitly — hence
+     the width: 100% above. */
+  min-height: 2.75rem;
   background: var(--paper-2);
   transition: background-color 180ms ease-out;
 }
