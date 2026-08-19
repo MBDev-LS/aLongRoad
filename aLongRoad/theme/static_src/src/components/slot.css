@@ -1,7 +1,8 @@
 /* Vacant and reserved slot tiles. Both are ordinary <li> items carrying
-   their slot number, both draw their own connecting road so the chain
-   stays joined across a gap that has no artwork yet. Design plan §5.5,
-   bible §5.3. State is always carried as text, never colour alone. */
+   their slot number. Design plan §5.5. State is always carried as text,
+   never colour alone. Previously each drew its own connecting road
+   across the gap (bible §5.3); that SVG was removed — see the comment
+   in _slot.html — leaving a plain box for hand-placed designs. */
 
 .road-slot-art {
   grid-column: 2;
@@ -17,20 +18,6 @@
   .road-slot-art {
     grid-column: 1;
   }
-}
-
-.road-slot-road {
-  stroke-width: 3;
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.road-slot[data-state="vacant"] .road-slot-road {
-  stroke: var(--ink-3);
-}
-
-.road-slot[data-state="reserved"] .road-slot-road {
-  stroke: var(--ochre);
 }
 
 .road-slot-label {
@@ -52,11 +39,6 @@
 a.road-slot-art {
   text-decoration: none;
   cursor: pointer;
-}
-
-a.road-slot-art:hover .road-slot-road,
-a.road-slot-art:focus-visible .road-slot-road {
-  stroke: var(--accent);
 }
 
 a.road-slot-art:hover .road-slot-label,

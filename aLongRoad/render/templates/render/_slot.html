@@ -1,29 +1,30 @@
 {% comment %}
 Vacant / reserved tile. Shares .road-section's three-track grid so its
-numeral and artwork column line up with every live section, and draws
-its own connecting road from its entry anchors to its exit anchors —
-a vacant slot cannot be skipped, its neighbours' anchors were issued
-against it (project-bible.md §5.3).
+numeral and artwork column line up with every live section.
+
+The connecting-road SVG that used to draw here (entry anchors to exit
+anchors, project-bible.md §5.3) was removed at Damian's request — it
+was rendering as a distorted grey shape because this <li> never set
+--ar-num, so .road-section's row height (road.css) fell back to a
+square instead of the tile's real aspect ratio, and the seam SVG's
+viewBox got stretched non-uniformly to fill the oversized box. Rather
+than just re-adding --ar-num, the seam markup is gone entirely so this
+is a plain box for hand-placed designs. Re-adding a connector later
+needs --ar-num restored too, or the same distortion comes back.
 {% endcomment %}
 <li class="road-section road-slot" value="{{ s.slot_number }}" data-slot="{{ s.slot_number }}"
     data-state="{{ s.state }}"
     data-entry-l="{{ s.entry_l }}" data-entry-r="{{ s.entry_r }}"
     data-exit-l="{{ s.exit_l }}" data-exit-r="{{ s.exit_r }}"
-    style="--ar: {{ s.width }} / {{ s.height }};">
+    style="--ar: {{ s.width }} / {{ s.height }}; --ar-num: {{ s.ratio }};">
     <span class="road-index" aria-hidden="true">#{{ s.slot_number|stringformat:"04d" }}</span>
 
     {% if s.state == "vacant" %}
     <a class="road-slot-art" href="#" aria-label="Reserve slot #{{ s.slot_number|stringformat:'04d' }}">
-        <svg class="road-seam road-slot-road" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M {{ s.entry_l }} 1 L {{ s.exit_l }} 0 M {{ s.entry_r }} 1 L {{ s.exit_r }} 0" />
-        </svg>
         <span class="road-slot-label">This stretch is unbuilt</span>
     </a>
     {% else %}
     <div class="road-slot-art">
-        <svg class="road-seam road-slot-road" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M {{ s.entry_l }} 1 L {{ s.exit_l }} 0 M {{ s.entry_r }} 1 L {{ s.exit_r }} 0" />
-        </svg>
         <span class="road-slot-label">Reserved — being drawn</span>
     </div>
     {% endif %}
