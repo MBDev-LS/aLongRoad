@@ -2,6 +2,8 @@
 
 **Purpose.** This is the single onboarding brief for anyone — human or LLM agent — joining this project. It records what the project *is*, what has been *decided*, what has been *proposed but not signed off*, and what is *still unknown*. Read it in full before making changes.
 
+**Revision 6** — 19 August 2026, against branch `Issue-1` @ `9d1fe82`. §0's marker table said `[DECIDED]` is "Settled by the project owners" — corrected to "Louis or Damian" to match `memory/people.md` `P0` (neither is the owner).
+
 **Revision 5** — 19 August 2026, against branch `Issue-1` @ `06e80e3`. Adds `docs/claude/memory/` (preference store, README §7) and `docs/claude/output/` (generated deliverables, README §2) to §16.
 
 **Revision 4** — 18 August 2026, against branch `Issue-1` @ `5e5d149`. Corrects stale facts (§2.1, §2.2), records DaisyUI's removal as answered (§9.3, §14), and adds `render/templates/render/index2.html` — a reference build of the spine, chain contract, CSS-only clamp, mobile drawer and loader markup contract, alongside the untouched original prototype.
@@ -16,7 +18,7 @@ Every substantive statement carries a status marker. **Respect them.**
 
 | Marker | Meaning | What you may do |
 |---|---|---|
-| `[DECIDED]` | Settled by the project owners, or already true in the repo. | Build on it. Do not relitigate. |
+| `[DECIDED]` | Settled by Louis or Damian, or already true in the repo. | Build on it. Do not relitigate. |
 | `[PROPOSED]` | Recommended in the design plan, awaiting sign-off. | May be implemented once that phase is approved. Flag that it's provisional. |
 | `[OPEN]` | Genuinely undecided. Listed in §14. | **Do not invent an answer.** Ask, or stop and flag it. |
 

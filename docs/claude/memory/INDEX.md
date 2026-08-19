@@ -13,6 +13,7 @@ If you are about to **write or change** a memory, read `PROTOCOL.md` first. If y
 | `D` | `docs.md` | Writing, explaining and documenting |
 | `W` | `workflow.md` | Process: commits, models, verification, when to ask |
 | `P` | `people.md` | Who Louis and Damian are, and how they differ |
+| `T` | `tooling.md` | Tooling and environment gotchas — traps, not preferences |
 
 Entries are `[both]`, `[Louis]` or `[Damian]` — whose preference it encodes, **not** who wrote it down. A `[Louis]` entry does not automatically apply to Damian's sessions.
 
@@ -56,3 +57,7 @@ Entries are `[both]`, `[Louis]` or `[Damian]` — whose preference it encodes, *
 - `P0` [both] Louis and Damian are equal partners — neither owns the project.
 - `P1` [Louis] Originated the idea; drives most agent sessions, reviews closely.
 - `P2` [Damian] Wrote the v1 prototype; holds specific `[OPEN]` calls.
+
+## T — Tooling (`tooling.md`)
+
+- `T1` [both] `md2pdf` silently swallows conversion errors on literal `{{ }}`/`{% %}` — wrap in `{% raw %}`/`{% endraw %}`.

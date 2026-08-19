@@ -6,6 +6,8 @@
 
 This folder is a **tracked, human-readable workspace** for plans, decisions and context. It is committed to the repository like any other project file and pushed to GitHub. It exists because this project has two contributors and many AI agent sessions that share no memory with each other — a decision made in one chat transcript is invisible to everyone else. This folder is where that thinking becomes durable and shared.
 
+**Revision 3** — 19 August 2026, against branch `Issue-1` @ `9d1fe82`. §0's marker table said `[DECIDED]` is "Settled by Louis" — stale since `memory/people.md` `P0` records Louis and Damian as equal partners; corrected to "Louis or Damian".
+
 **Revision 2** — 19 August 2026, against branch `Issue-1` @ `06e80e3`. Adds the mandatory memory store (§7) as an authorised Tier 3, and `output/` as Tier 2b for generated deliverables (§2). Both at Louis's request.
 
 **Revision 1** — 18 August 2026, against branch `Issue-1` @ `d47ba39`. Written at Louis's request when he created this folder.
@@ -18,7 +20,7 @@ This document uses the same markers as `project-bible.md` §0, and for the same 
 
 | Marker | Meaning |
 |---|---|
-| `[DECIDED]` | Settled by Louis, or already true in the repo. Build on it. |
+| `[DECIDED]` | Settled by Louis or Damian, or already true in the repo. Build on it. |
 | `[PROPOSED]` | A recommendation, not yet agreed by both contributors. Follow it, but say it's provisional if challenged. |
 | `[OPEN]` | Undecided. Do not invent an answer. |
 

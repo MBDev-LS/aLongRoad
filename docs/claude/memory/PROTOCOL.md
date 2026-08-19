@@ -6,7 +6,7 @@
 
 ## 1. What belongs here — and what doesn't
 
-This system stores **how Louis and Damian want to be worked with**. Nothing else.
+This system stores **how Louis and Damian want to be worked with**, plus recurring **tooling/environment traps** that will bite any agent working in this repo (group `T`). Nothing else.
 
 | Belongs in memory | Belongs elsewhere |
 |---|---|
@@ -14,6 +14,7 @@ This system stores **how Louis and Damian want to be worked with**. Nothing else
 | Recurring feedback across sessions | Visual/architectural reasoning → `design-plan.html` |
 | Who prefers what, and how they differ | What changed and when → `git log` |
 | Approaches a developer has rejected, and why | Task state, todos, session summaries → nowhere; they're transient |
+| A tool/environment bug that silently misbehaves and will recur (group `T`) | A one-off bug already fixed in the code itself |
 
 The hard boundary: **memory never decides anything about the project.** If a session settles a technical question, that goes in the bible with a status marker, exactly as `README.md` §5 requires. Memory records that Louis prefers CSS to JavaScript; the bible records that this project uses `-webkit-line-clamp`. Keeping that line clean is what stops this becoming a competing source of truth.
 

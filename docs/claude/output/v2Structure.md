@@ -1,3 +1,4 @@
+{% raw %}
 # `/v2/` — what was built and how it's put together
 
 Written 19 August 2026, for Louis, covering the whole `index2.html` effort: the initial build (Opus 5 planned it, Sonnet 5 built it) and every fix since. Companion to `v2Handover.md` (that one's for Damian, short, framed against his prototype). This one's longer on purpose — enough to edit and extend the code from, not just read once.
@@ -228,3 +229,4 @@ Both share `debounce()` and `withoutTransition()` from the top of the file. The 
 The infinite-scroll loader itself, self-hosted fonts (tokens already read `var(--font-*)` everywhere, so this is a font-file swap, not a template change), the light/dark/system theme *control* (the no-flash script and tokens are ready, there's just no UI toggle), unloading of offscreen sections, and the report dialog. All are named, in order, in `design-plan.html`'s phase list — nothing here was skipped by accident.
 
 One live gap: `project-bible.md` / `design-plan.html` were updated when `index2.html` first landed, but haven't been revised for anything since the masthead fix — worth a pass before `/v2/` replaces `/`.
+{% endraw %}
