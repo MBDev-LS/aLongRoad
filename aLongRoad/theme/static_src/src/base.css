@@ -15,7 +15,7 @@ html {
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    color-scheme: dark;
+	color-scheme: dark;
   }
 }
 
@@ -58,10 +58,10 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    scroll-behavior: auto !important;
+	animation-duration: 1ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 1ms !important;
+	scroll-behavior: auto !important;
   }
 }
 
