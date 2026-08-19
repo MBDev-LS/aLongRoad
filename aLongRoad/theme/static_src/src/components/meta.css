@@ -1,20 +1,31 @@
 /* Section metadata: title, author, description, action row, and the mobile
-   disclosure drawer. Design plan §5.4, §6.1. */
+   disclosure drawer. Design plan §5.4, §6.1.
+
+   Two entirely different problems, deliberately solved two different ways:
+
+   - Below 640px, the whole block (title through actions) hides behind a
+     tap on the artwork to save vertical space in a single narrow column.
+     Expanding it is allowed to grow the section's own height — the next
+     section moving down is the point (see .road-drawer below).
+
+   - At 640px and up, the row's height is pinned to the artwork's own
+     height (road.css) and must never grow past it, or the chain breaks.
+     Title/author/actions are always shown in full; only the description
+     is long enough to realistically overflow, so it alone clips, with a
+     small toggle to read the rest without disturbing the row (see
+     .road-meta-clip below).
+
+   Ordering note: every "unwrap the mobile drawer at desktop width" rule in
+   this file is deliberately placed *after* the drawer's own base rules —
+   CSS resolves equal-specificity conflicts by source order, so an earlier
+   @media override here would silently lose to a later unconditional
+   declaration further down the file. */
 
 .road-meta {
   grid-column: 3;
   align-self: start;
-  position: sticky;
-  top: 1rem;
   max-inline-size: 36ch;
   padding-inline: 1.25rem;
-  padding-block: 0.5rem;
-}
-
-@media (width < 1024px) {
-  .road-meta {
-    position: static;
-  }
 }
 
 @media (width < 640px) {
@@ -46,21 +57,25 @@
   overflow-wrap: break-word;
 }
 
-/* Fixed line-count clamp. Replaces the ResizeObserver entirely — no reads,
-   no writes, no JS. Bible §15.6. */
-.road-desc {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
-  overflow: hidden;
-}
-
 .road-actions {
   margin-top: 0.75rem;
   display: flex;
+  flex-wrap: wrap; /* safety net if a future --road-w change ever leaves too little width for three labels in a row */
   gap: 1rem;
   list-style: none;
   padding: 0;
+}
+
+/* Share and Report as one flex item rather than two, so a wrap can only
+   ever split the row into "More/Less" and "Share + Report" — never strand
+   Report on its own line while Share stays paired with More/Less. Plain
+   flex (not wrap) by default: a nested flex container doesn't inherit its
+   parent's wrapping, so these two never split from each other regardless
+   of width. */
+.road-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .road-actions button,
@@ -83,6 +98,27 @@
 .road-actions button:hover,
 .road-actions a:hover {
   color: var(--accent);
+}
+
+/* The description's own clip + expand, desktop only (width >= 640px). Takes
+   whatever height is left in .road-meta's fixed budget after title, author
+   and actions — never a fixed line count, since the available space varies
+   with both the image's aspect ratio and --road-w.
+
+   The toggle itself — .road-meta-more, in .road-actions below — lives
+   outside this box entirely rather than overlaid on top of it. An earlier
+   version pinned it inside .road-meta-clip; it doesn't need any styling of
+   its own here at all, since .road-actions button already gives it the
+   same look as Share/Report for free. */
+.road-meta-clip {
+  overflow: hidden; /* safety: the inner scroll wrapper is what actually clips, but this keeps this element from ever contributing unclamped height if that ever changes */
+}
+
+/* Hidden on the <li> wrapper (.road-more-item, in the template) rather
+   than here — this rule is unused at the moment but kept as a fallback in
+   case a future change ever renders .road-meta-more outside that li. */
+.road-meta-more {
+  display: none;
 }
 
 /* Mobile disclosure trigger — a full-cover button laid over the artwork
@@ -114,7 +150,9 @@
    requirement. With no JS every section is readable at every width, which
    is content parity (bible §11) even though the chain visually breaks on a
    phone. road.js sets [data-enhanced] on .road once it has wired up the
-   buttons, and only then does the collapsed state apply. */
+   buttons, and only then does the collapsed state apply — and suspends
+   this transition while doing so, so that first collapse is instant rather
+   than an unwanted flash of open-then-closed (see road.js). */
 .road-drawer {
   display: grid;
   grid-template-rows: 1fr;
@@ -125,12 +163,128 @@
   grid-template-rows: 0fr;
 }
 
-.road-drawer > div {
+/* .road-drawer-collapse is the grid item actually sized by .road-drawer's
+   0fr/1fr track, and deliberately carries no padding of its own: a grid
+   item's automatic minimum size only relaxes to 0 (letting overflow:hidden
+   genuinely reach zero height) for its own content, never for its own
+   padding — padding always adds on top regardless. Put padding here
+   instead and it becomes a hard floor no 0fr track can shrink past, which
+   is exactly the leftover gap this split avoids. Padding lives one level
+   further in, on .road-drawer-inner, where it's just ordinary content that
+   the unpadded wrapper is free to clip away entirely. */
+.road-drawer-collapse {
   overflow: hidden;
+}
+
+@media (width < 640px) {
+  /* Breathing room for the drawer's text content specifically — the
+     artwork above it stays full-bleed to the screen edge (road.css), only
+     the text needs an inset. */
+  .road-drawer-inner {
+    padding: 0.75rem 1.25rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .road-drawer {
     transition-duration: 1ms;
   }
+}
+
+/* ---- Desktop (width >= 640px): everything above this point is either
+   shared or mobile-only. Below here, the mobile drawer wrappers unwrap via
+   display:contents (must come after their base display:grid rule above to
+   win the cascade) and .road-meta becomes the flex container that pins
+   metadata height to the artwork's own height. ---- */
+
+@media (width >= 640px) {
+  .road-drawer,
+  .road-drawer-collapse,
+  .road-drawer-inner {
+    display: contents;
+  }
+
+  .road-meta {
+    grid-row: 1;
+    height: 100%;
+    padding-block: 0.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .road-title,
+  .road-author,
+  .road-actions {
+    flex: 0 0 auto;
+  }
+
+  .road-meta-clip {
+    /* flex-shrink only, no flex-grow: this should take exactly its own
+       content's height and clip only when that genuinely exceeds what's
+       left after title/author/actions — not stretch to fill leftover
+       space when the description is short, which would shove .road-actions
+       down to the bottom of the row and open a blank gap above it.
+       (overflow:hidden, needed for the automatic-minimum relaxation this
+       depends on, is set unconditionally above — the actual visible
+       clip/scroll happens one level in, on .road-meta-clip-scroll.) */
+    flex: 0 1 auto;
+    min-height: 0; /* let it shrink below content size — otherwise flex items default to their content's min size and never clip */
+  }
+
+  /* Expanding never changes .road-meta-clip's own size — it stays exactly
+     as tall as the collapsed state, matching the row, always. An earlier
+     version let the box grow past the row and overlap the next section's
+     metadata instead, which turned out to be fighting a feature this
+     project needs rather than a styling detail: .road-section below uses
+     content-visibility:auto so hundreds of offscreen sections cost nothing
+     to scroll past, and that applies paint containment unconditionally —
+     it clips descendant overflow to the section's own box even when the
+     overflowing descendant itself says overflow:visible. So content can't
+     actually spill past its row no matter what this rule says, and even
+     forcing content-visibility off to test it, the overlap's stacking
+     order against the next section was unpredictable and genuinely
+     illegible. Reading the rest by scrolling in place — same footprint,
+     same chain, nothing to fight — is the version that's actually robust. */
+  .road-meta-clip-scroll {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .road-meta-clip[data-expanded] .road-meta-clip-scroll {
+    overflow-y: auto;
+  }
+
+  /* Fades the clipped tail rather than cutting text off mid-line. Only
+     shown when road.js has confirmed there's actually more to read. */
+  .road-meta-clip[data-truncated]:not([data-expanded]) .road-meta-clip-scroll {
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 2.5rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, black calc(100% - 2.5rem), transparent 100%);
+  }
+
+  /* If .road-actions wraps (narrow desktop widths only — see the flex-wrap
+     safety net above), put More/Less on its own line ABOVE Share/Report
+     rather than below: it is the control for the text directly above it,
+     so it belongs closer to that text, not further away. Safe to reorder
+     visually without touching tab order (DOM order stays Share, Report,
+     More) because .road-actions-group keeps Share+Report atomic — the only
+     possible wrap is a clean two-way split, never a stranded third item. */
+  .road-more-item {
+    order: -1;
+  }
+
+  /* .road-meta-more (the "More"/"Less" toggle) lives in .road-actions,
+     styled identically to Share/Report with no rules of its own — see the
+     comment by .road-meta-clip above. Two earlier versions put it inside
+     this clipped area instead: first pinned over the text (which then
+     scrolled underneath it, unreadable — position:absolute is relative to
+     the padding box of its containing block, and that box moves with the
+     scrolled content when the containing block is itself what scrolls),
+     then pinned outside the scrolling part but still inside .road-meta-clip
+     (which fixed the scrolling-away bug but permanently reserved space for
+     it, and its width didn't reliably span the clip, so description text
+     could still render past its edge). Living in .road-actions instead —
+     genuinely outside the clipped box, not just outside the scrolling part
+     of it — avoids both: nothing to overlap, and the full clip height goes
+     to actual reading space. Its position after Share and Report is just
+     DOM order in the template — no CSS ordering needed. */
 }

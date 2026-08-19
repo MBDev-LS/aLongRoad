@@ -9,6 +9,16 @@
   padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
+/* Artwork is genuinely full-bleed below 640px (design plan §6) — no side
+   inset for the road itself. The masthead keeps its own padding, and the
+   head tile's/slot's label text keep theirs so nothing touches the screen
+   edge directly. */
+@media (width < 640px) {
+  .road-stack {
+    padding-inline: 0;
+  }
+}
+
 /* Hairline rails either side of the artwork column — one continuous line
    for the whole road, not a border per section (bible §15.4). Hidden
    full-bleed below 640px. */
@@ -50,6 +60,22 @@
   contain-intrinsic-size: auto calc(var(--road-w) * var(--ar-num, 1));
 }
 
+@media (width >= 640px) {
+  /* The row's height is strictly the artwork's own rendered height —
+     nothing else may stretch it, or a gap opens where the row grew taller
+     than the image and the chain visibly breaks. An auto-sized grid row
+     would otherwise grow to fit whichever cell is tallest (often the
+     metadata, since descriptions are free text up to ~600 characters);
+     this pins it to .road-art's height instead, computed the same way
+     contain-intrinsic-size already is above. components/meta.css relies
+     on this being a *definite* height — it's what lets .road-meta split
+     the space with flexbox and clip its own overflow rather than
+     expanding the row. */
+  .road-section {
+    grid-template-rows: calc(var(--road-w) * var(--ar-num, 1));
+  }
+}
+
 @media (width < 640px) {
   .road-section {
     grid-template-columns: minmax(0, 1fr);
@@ -84,6 +110,19 @@
   grid-column: 2;
   position: relative;
   margin: 0;
+}
+
+@media (width < 640px) {
+  /* Without this, .road-art stays pinned to line 2 of a grid that only
+     defines one column below 640px (.road-section, above) — the browser
+     creates an implicit auto-width column to satisfy it, so the artwork
+     detaches into a narrow strip beside the metadata instead of stacking
+     above it at full width. Dropping to column 1 puts it back in the
+     single track, and DOM order (art, then meta) auto-places it in the
+     row above the drawer. */
+  .road-art {
+    grid-column: 1;
+  }
 }
 
 .road-art img {
@@ -128,6 +167,15 @@
   transition: background-color 180ms ease-out;
 }
 
+@media (width < 640px) {
+  /* Same bug as .road-art above: this stays pinned to column 2 of a grid
+     that collapses to one column below 640px, so it was landing in an
+     implicit column off to the right instead of the single real one. */
+  .road-head-art {
+    grid-column: 1;
+  }
+}
+
 .road-head:is(:hover, :focus-visible) .road-head-art {
   background: color-mix(in oklab, var(--accent) 12%, var(--paper-2));
 }
@@ -145,13 +193,15 @@
 }
 
 .road-head-label {
-  grid-column: 2;
-  justify-self: center;
-  align-self: center;
+  /* Not a grid child of .road-head — it's nested inside .road-head-art —
+     so it positions purely via inset:0 against that ancestor, not a grid
+     column. Centred over the art box at any width, including narrow. */
   position: absolute;
   inset: 0;
+  padding: 1rem;
   display: grid;
   place-items: center;
+  text-align: center;
   font-family: var(--font-mono);
   font-size: var(--text-label);
   letter-spacing: 0.14em;

@@ -10,6 +10,15 @@
   background: var(--paper-2);
 }
 
+@media (width < 640px) {
+  /* Same bug as .road-art in road.css: .road-slot shares .road-section's
+     grid, which collapses to one column below 640px, so this needs the
+     matching override or it lands in an implicit column off to the side. */
+  .road-slot-art {
+    grid-column: 1;
+  }
+}
+
 .road-slot-road {
   stroke-width: 3;
   fill: none;

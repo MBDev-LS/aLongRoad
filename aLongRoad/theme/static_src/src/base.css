@@ -64,3 +64,13 @@ img {
     scroll-behavior: auto !important;
   }
 }
+
+/* Applied briefly by road.js around a programmatic state change (e.g. the
+   disclosure drawers' initial collapsed state, or a breakpoint crossing) so
+   that transition rules meant for deliberate user interaction don't also
+   animate a JS-driven initialisation — which reads as an unwanted flash of
+   the wrong state settling into the right one. */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}

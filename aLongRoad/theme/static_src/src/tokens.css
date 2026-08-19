@@ -33,7 +33,7 @@
   --text-meta: 0.8125rem;
   --text-label: 0.6875rem;
 
-  --road-w: clamp(17.5rem, 42vw, 34rem); /* [PROPOSED — bible §14.A.1, Damian's call] */
+  --road-w: clamp(17.5rem, 42vw, 40.8rem); /* [PROPOSED — bible §14.A.1, Damian's call] — max raised ~20% (34rem to 40.8rem) so the road keeps growing past ~1300px instead of plateauing well before typical wide desktop monitors */
 }
 
 :root {

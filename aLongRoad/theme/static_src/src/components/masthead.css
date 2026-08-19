@@ -1,37 +1,40 @@
-/* Masthead: the page's only h1, the reserved logo box, and the jump-to-the-
-   end control. Design plan §5.1. Theme control itself is a follow-up —
-   tokens and the no-flash script are already in place for it. */
+/* Masthead: the page's only h1, and the jump-to-the-end control. Design
+   plan §5.1. Theme control itself is a follow-up — tokens and the
+   no-flash script are already in place for it.
+
+   The mark is centred and set large, as a title rather than a corner
+   logo. When a real SVG wordmark replaces the text (design plan §5.1),
+   give IT an aspect-ratio reservation at that point — this plain-text
+   version doesn't need one, it just sets its own height via font-size. */
 
 .masthead {
   max-width: 100rem;
   margin-inline: auto;
-  padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 3rem);
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem);
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
 }
 
 .masthead-mark {
   margin: 0;
-  aspect-ratio: 4 / 3;
-  max-height: 22vh;
-  display: flex;
-  align-items: center;
+  max-width: 18ch;
 }
 
 .masthead-mark-text {
+  display: block;
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  line-height: 1.1;
+  font-size: clamp(2.5rem, 6.5vw, 4.75rem);
+  line-height: 1.05;
   color: var(--ink);
 }
 
 .masthead-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding-top: 0.5rem;
+  justify-content: center;
 }
 
 .masthead-jump {

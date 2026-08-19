@@ -20,14 +20,27 @@ road_batch_view, so it must never be duplicated in JavaScript
 
     <figcaption class="road-meta">
         <div class="road-drawer" id="drawer-{{ s.slot_number }}">
-            <div>
-                <h2 class="road-title">{{ s.title }}</h2>
-                <p class="road-author">By {{ s.author_name }}</p>
-                <p class="road-desc">{{ s.description }}</p>
-                <ul class="road-actions">
-                    <li><a href="#">Share</a></li>
-                    <li><button type="button">Report</button></li>
-                </ul>
+            <div class="road-drawer-collapse">
+                <div class="road-drawer-inner">
+                    <h2 class="road-title">{{ s.title }}</h2>
+                    <p class="road-author">By {{ s.author_name }}</p>
+                    <div class="road-meta-clip" id="desc-{{ s.slot_number }}">
+                        <div class="road-meta-clip-scroll">
+                            <p class="road-desc">{{ s.description }}</p>
+                        </div>
+                    </div>
+                    <ul class="road-actions">
+                        <li class="road-actions-group">
+                            <a href="#">Share</a>
+                            <button type="button">Report</button>
+                        </li>
+                        <li class="road-more-item" hidden>
+                            <button type="button" class="road-meta-more" aria-controls="desc-{{ s.slot_number }}">
+                                <span>More</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </figcaption>
