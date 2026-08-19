@@ -22,7 +22,7 @@
 /* Hairline rails either side of the artwork column — one continuous line
    for the whole road, not a border per section (bible §15.4). Hidden
    full-bleed below 640px. */
-.road-stack::before,
+/* .road-stack::before,
 .road-stack::after {
   content: "";
   position: absolute;
@@ -40,7 +40,7 @@
   .road-stack::after {
     display: none;
   }
-}
+} */
 
 .road {
   list-style: none;
