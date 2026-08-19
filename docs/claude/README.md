@@ -2,7 +2,11 @@
 
 **Read this first if you are an AI agent working on this project.** Then read `project-bible.md` in full before changing anything.
 
+> **You MUST also read `memory/INDEX.md` at the start of every session, and you MUST update it when a developer expresses a preference.** It is small and cheap by design. See §7 — this is not optional, and it is the one file that tells you how Louis and Damian each want to be worked with.
+
 This folder is a **tracked, human-readable workspace** for plans, decisions and context. It is committed to the repository like any other project file and pushed to GitHub. It exists because this project has two contributors and many AI agent sessions that share no memory with each other — a decision made in one chat transcript is invisible to everyone else. This folder is where that thinking becomes durable and shared.
+
+**Revision 2** — 19 August 2026, against branch `Issue-1` @ `06e80e3`. Adds the mandatory memory store (§7) as an authorised Tier 3, and `output/` as Tier 2b for generated deliverables (§2). Both at Louis's request.
 
 **Revision 1** — 18 August 2026, against branch `Issue-1` @ `d47ba39`. Written at Louis's request when he created this folder.
 
@@ -47,7 +51,11 @@ These are **edited in place, never duplicated.** When something changes, revise 
 
 **Tier 2 — frozen exports.** `project-bible.pdf` and `long-road-open-questions.pdf` are point-in-time snapshots for sharing, not living documents. A fresh export **replaces** the file at the same name. Never accumulate `-v2`, `-final`, `-updated`.
 
-**There is no Tier 3.** No session notes, no `ideas.md`, no per-agent working files, no dated one-off logs. Before creating any new file here, the test is: **does this belong in an existing document instead?** Almost always it does. A new file is justified only for a genuinely large freestanding topic that fits neither existing document and will be maintained — a formal CSAM or takedown protocol, say. It is *not* justified for a summary of what you did this session (that's the commit message and the revision line), or a draft of something destined for the bible (edit the bible, marking the unsettled parts `[PROPOSED]`).
+**Tier 2b — generated deliverables.** `output/` holds documents written *for a person to read* — handovers, structure write-ups, explainers. They are products of a session rather than living references, so they are not revision-lined; supersede or delete them rather than accumulating variants. `docs/notes/` outside this folder is the developers' own space and agents do not write there.
+
+**Tier 3 — the memory store.** `memory/` holds developer preferences that persist between sessions, added at Louis's request on 19 August 2026. It is a deliberate, authorised exception to the "no third tier" rule below, and the only one. It is governed by its own `memory/PROTOCOL.md` rather than by the Tier 1 revision-line convention, because its entries are amended continuously rather than in reviewed passes. See §7. **Nothing else may be added to this folder on the strength of this precedent** — the test in the next paragraph still applies to everything that is not a memory entry.
+
+**There is no Tier 4.** No session notes, no `ideas.md`, no per-agent working files, no dated one-off logs. Before creating any new file here, the test is: **does this belong in an existing document instead?** Almost always it does. A new file is justified only for a genuinely large freestanding topic that fits neither existing document and will be maintained — a formal CSAM or takedown protocol, say. It is *not* justified for a summary of what you did this session (that's the commit message and the revision line), or a draft of something destined for the bible (edit the bible, marking the unsettled parts `[PROPOSED]`).
 
 ## 3. Blame: how to tell what changed and who did it
 
@@ -106,6 +114,7 @@ git log --format='%h %an %s%n  %(trailers:only=true)'  # which commits had AI in
 
 **Do**
 
+- Read `memory/INDEX.md` at the start of every session, and record preferences there as they're expressed (§7).
 - Edit Tier 1 documents in place and bump the revision line.
 - Keep bible §16 and the real folder contents in sync, in the same commit.
 - Use git and the model-naming trailer for attribution — the mechanism already exists.
@@ -117,6 +126,8 @@ git log --format='%h %an %s%n  %(trailers:only=true)'  # which commits had AI in
 **Don't**
 
 - Create a file for a session summary, a draft, or anything that could be a section edit.
+- Let a developer state the same preference twice — if that happens, the memory entry was missing or wrong; fix it.
+- Record a *project decision* as a memory entry, or a *personal preference* as a bible entry (§7).
 - Let a resolved question live only in a conversation.
 - Strip or shorten the `Co-Authored-By` trailer, or otherwise obscure AI involvement.
 - Silently overwrite a `[PROPOSED]` recommendation or a flagged disagreement.
@@ -124,6 +135,24 @@ git log --format='%h %an %s%n  %(trailers:only=true)'  # which commits had AI in
 - Duplicate section markup between Django templates and JavaScript.
 - Treat this folder as a second decision-making channel competing with the bible. One source of truth per topic.
 
+## 7. Memory: preferences that persist between sessions
+
+`[DECIDED]` **Requested by Louis, 19 August 2026.** The mechanism is `[PROPOSED]` — refine it freely if it isn't working.
+
+Sessions share no memory with each other. The bible solves that for *project decisions*; `memory/` solves it for **how Louis and Damian each want to be worked with** — the preferences, corrections and rejected approaches that would otherwise have to be re-stated every session.
+
+**The rules, which are not optional:**
+
+1. **Read `memory/INDEX.md` at the start of every session.** It is one small file, deliberately: a router with one line per entry. Open a group file (`code.md`, `design.md`, `docs.md`, `workflow.md`, `people.md`) only when the task touches it.
+2. **Write an entry the moment a preference is expressed** — when a developer corrects you, rejects an approach, or states a preference. Not in an end-of-session sweep.
+3. **Update the existing entry rather than adding a near-duplicate.** Memory stores rot into duplicates and contradictions precisely because every write is local and incremental; this is the single most important rule for keeping it usable.
+4. **Read `memory/PROTOCOL.md` before writing or changing anything** — entry format, provenance fields, consolidation, and how developers request edits. You do not need it if you are only reading.
+5. **Scope every entry.** `[both]`, `[Louis]` or `[Damian]`. A preference one of them stated does not silently bind the other.
+
+**Boundary with the bible:** memory never decides anything about the project. "Louis prefers CSS to JavaScript" is a memory; "this project uses `-webkit-line-clamp`" is a bible entry. If a session settles a technical question, §5.2 above still applies — it goes in the bible.
+
+Louis and Damian can direct the store in plain language ("forget that", "that's mine not Damian's", "pin that"). Act on it in the same session and name the entry ID you changed.
+
 ---
 
-**Index:** `project-bible.md` (the reference) · `design-plan.html` (the argument) · this file (the process).
+**Index:** `project-bible.md` (the reference) · `design-plan.html` (the argument) · this file (the process) · `memory/` (the preferences).

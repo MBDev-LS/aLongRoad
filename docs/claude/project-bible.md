@@ -2,6 +2,8 @@
 
 **Purpose.** This is the single onboarding brief for anyone — human or LLM agent — joining this project. It records what the project *is*, what has been *decided*, what has been *proposed but not signed off*, and what is *still unknown*. Read it in full before making changes.
 
+**Revision 5** — 19 August 2026, against branch `Issue-1` @ `06e80e3`. Adds `docs/claude/memory/` (preference store, README §7) and `docs/claude/output/` (generated deliverables, README §2) to §16.
+
 **Revision 4** — 18 August 2026, against branch `Issue-1` @ `5e5d149`. Corrects stale facts (§2.1, §2.2), records DaisyUI's removal as answered (§9.3, §14), and adds `render/templates/render/index2.html` — a reference build of the spine, chain contract, CSS-only clamp, mobile drawer and loader markup contract, alongside the untouched original prototype.
 
 **This document is for both Louis and Damian**, and for any agent working on the project. Items needing Damian's specific input are collected in design plan §12 and flagged in §14 here.
@@ -647,6 +649,8 @@ Most of the first two rounds are now answered. What remains, grouped by who need
 
 - **`docs/claude/design-plan.html`** — visual direction, layout architecture, component specs, the chain diagram, and the phased build order with reasoning. Open it in a browser.
 - **`docs/claude/README.md`** — process for this workspace: what may be created here, how blame and attribution work, code-sprawl discipline, and the dos and don'ts. **Agents should read it before this document.**
+- **`docs/claude/output/`** — generated deliverables written for a person to read: `v2Structure.md` (the `/v2/` build, its file structure and CSS architecture) and `noteFromLouis--DamianReadThis.md` (Louis's covering note plus the `/v2/` handover). Products of a session, not living references; see README §2.
+- **`docs/claude/memory/`** — the developer-preference store: `INDEX.md` (the router, read every session), `PROTOCOL.md` (rules for writing entries), and five group files. Records **how Louis and Damian want to be worked with**, never project decisions — those stay here. Mandatory for agents; see README §7.
 - **`docs/claude/project-bible.pdf`**, **`docs/claude/long-road-open-questions.pdf`** — frozen exports for sharing. Point-in-time snapshots, not maintained. A fresh export replaces the file at the same name.
 
 Everything lives in `docs/claude/`, which is tracked and pushed to GitHub. **This list is the authoritative index of the folder** — anything added or removed there is reflected here in the same commit (README §2).
