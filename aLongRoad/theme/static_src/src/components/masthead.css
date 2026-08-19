@@ -31,6 +31,15 @@
   color: var(--ink);
 }
 
+.masthead-logo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
 .masthead-nav {
   display: flex;
   align-items: center;

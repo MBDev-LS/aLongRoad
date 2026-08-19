@@ -1,0 +1,1 @@
+- add a new section button is goofy. remove lines & make it shorter
