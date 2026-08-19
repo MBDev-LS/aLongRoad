@@ -12,7 +12,7 @@ and every batch the loader will later fetch from road_batch_view — the
 {% endfor %}
 {% if next_cursor is not None %}
 <li class="road-cursor" data-before="{{ next_cursor }}">
-    <a href="{% url 'index2' %}?before={{ next_cursor }}">Continue down the road</a>
+    <a href="{% url 'index' %}?before={{ next_cursor }}">Continue down the road</a>
 </li>
 {% else %}
     {% include "render/_road_end.html" %}
