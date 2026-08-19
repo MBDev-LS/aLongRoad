@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vtr)8xibuekeh#b^dhdhs9s(!hb4bcicd*af@omvk%o5+p0t38
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['shrewdly-catchy-elbow.ngrok-free.dev']
 
 TAILWIND_APP_NAME = 'theme'
 
