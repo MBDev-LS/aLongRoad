@@ -33,8 +33,10 @@
 
 .masthead-logo {
   display: block;
-  max-width: 100%;
+  width: 100%;
+  max-width: 22rem;
   height: auto;
+  aspect-ratio: 550 / 270;
   margin: 0 auto;
   stroke: var(--ink);
   stroke-width: 3;

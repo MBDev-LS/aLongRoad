@@ -1,1 +1,4 @@
 - add a new section button is goofy. remove lines & make it shorter
+- placeholder section is disgusting. change to a different design, preferably a "construction zone" inspired design
+- make it skip to mobile sooner
+- make temporary logo scale at mobile
