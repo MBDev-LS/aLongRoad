@@ -27,7 +27,7 @@ def index_view(request):
 	"""
 	before = _parse_before(request)
 	sections, next_cursor = fixtures.get_batch(before=before)
-	return render(request, 'render/index2.html', {
+	return render(request, 'render/index.html', {
 		'sections': sections,
 		'next_cursor': next_cursor,
 		'top_section': fixtures.top_section(),
