@@ -3,12 +3,12 @@
 
    Two entirely different problems, deliberately solved two different ways:
 
-   - Below 640px, the whole block (title through actions) hides behind a
+   - Below 768px, the whole block (title through actions) hides behind a
      tap on the artwork to save vertical space in a single narrow column.
      Expanding it is allowed to grow the section's own height — the next
      section moving down is the point (see .road-drawer below).
 
-   - At 640px and up, the row's height is pinned to the artwork's own
+   - At 768px and up, the row's height is pinned to the artwork's own
      height (road.css) and must never grow past it, or the chain breaks.
      Title/author/actions are always shown in full; only the description
      is long enough to realistically overflow, so it alone clips, with a
@@ -28,7 +28,7 @@
   padding-inline: 1.25rem;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-meta {
     grid-column: 1;
     max-inline-size: none;
@@ -100,7 +100,7 @@
   color: var(--accent);
 }
 
-/* The description's own clip + expand, desktop only (width >= 640px). Takes
+/* The description's own clip + expand, desktop only (width >= 768px). Takes
    whatever height is left in .road-meta's fixed budget after title, author
    and actions — never a fixed line count, since the available space varies
    with both the image's aspect ratio and --road-w.
@@ -125,14 +125,14 @@
    (a sibling of the <img>, not a wrapper around it: display:none on a
    wrapping button would take its child image with it). Present in the DOM
    at every width but only occupies space, and only takes tab focus, below
-   640px; above that the metadata sits beside the art at all times and
+   768px; above that the metadata sits beside the art at all times and
    there is nothing to toggle. road.js wires the click handling and mirrors
    state into aria-expanded only while this is actually reachable. */
 .road-disclosure-trigger {
   display: none;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-disclosure-trigger {
     display: block;
     position: absolute;
@@ -176,7 +176,7 @@
   overflow: hidden;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   /* Breathing room for the drawer's text content specifically — the
      artwork above it stays full-bleed to the screen edge (road.css), only
      the text needs an inset. */
@@ -191,13 +191,13 @@
   }
 }
 
-/* ---- Desktop (width >= 640px): everything above this point is either
+/* ---- Desktop (width >= 768px): everything above this point is either
    shared or mobile-only. Below here, the mobile drawer wrappers unwrap via
    display:contents (must come after their base display:grid rule above to
    win the cascade) and .road-meta becomes the flex container that pins
    metadata height to the artwork's own height. ---- */
 
-@media (width >= 640px) {
+@media (width >= 768px) {
   .road-drawer,
   .road-drawer-collapse,
   .road-drawer-inner {

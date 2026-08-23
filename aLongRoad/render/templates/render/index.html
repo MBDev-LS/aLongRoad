@@ -77,5 +77,5 @@ that is a font-file change only, not a template or CSS one.
 {% endblock %}
 
 {% block extra_js %}
-<script type="module" src="{% static 'render/js/road.js' %}"></script>
+<script type="module" src="{% static 'render/js/road.js' %}?v={% now 'U' %}"></script>
 {% endblock %}

@@ -9,11 +9,11 @@
   padding-inline: clamp(1rem, 4vw, 3rem);
 }
 
-/* Artwork is genuinely full-bleed below 640px (design plan §6) — no side
+/* Artwork is genuinely full-bleed below 768px (design plan §6) — no side
    inset for the road itself. The masthead keeps its own padding, and the
    head tile's/slot's label text keep theirs so nothing touches the screen
    edge directly. */
-@media (width < 640px) {
+@media (width < 768px) {
   .road-stack {
     padding-inline: 0;
   }
@@ -21,7 +21,7 @@
 
 /* Hairline rails either side of the artwork column — one continuous line
    for the whole road, not a border per section (bible §15.4). Hidden
-   full-bleed below 640px. */
+   full-bleed below 768px. */
 /* .road-stack::before,
 .road-stack::after {
   content: "";
@@ -35,7 +35,7 @@
 .road-stack::before { left: calc(50% - var(--road-w) / 2); }
 .road-stack::after { left: calc(50% + var(--road-w) / 2); }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-stack::before,
   .road-stack::after {
     display: none;
@@ -60,7 +60,7 @@
   contain-intrinsic-size: auto calc(var(--road-w) * var(--ar-num, 1));
 }
 
-@media (width >= 640px) {
+@media (width >= 768px) {
   /* The row's height is strictly the artwork's own rendered height —
      nothing else may stretch it, or a gap opens where the row grew taller
      than the image and the chain visibly breaks. An auto-sized grid row
@@ -76,7 +76,7 @@
   }
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-section {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -100,7 +100,7 @@
   -webkit-text-stroke-color: var(--accent);
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-index {
     display: none;
   }
@@ -112,9 +112,9 @@
   margin: 0;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   /* Without this, .road-art stays pinned to line 2 of a grid that only
-     defines one column below 640px (.road-section, above) — the browser
+     defines one column below 768px (.road-section, above) — the browser
      creates an implicit auto-width column to satisfy it, so the artwork
      detaches into a narrow strip beside the metadata instead of stacking
      above it at full width. Dropping to column 1 puts it back in the
@@ -153,7 +153,7 @@
   color: inherit;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   .road-head {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -177,9 +177,9 @@
   transition: background-color 180ms ease-out;
 }
 
-@media (width < 640px) {
+@media (width < 768px) {
   /* Same bug as .road-art above: this stays pinned to column 2 of a grid
-     that collapses to one column below 640px, so it was landing in an
+     that collapses to one column below 768px, so it was landing in an
      implicit column off to the right instead of the single real one. */
   .road-head-art {
     grid-column: 1;

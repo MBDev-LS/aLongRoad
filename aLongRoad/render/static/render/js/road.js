@@ -17,7 +17,7 @@ function debounce(fn, wait = 150) {
 // Suspends CSS transitions on `el` for a programmatic style change, so it
 // applies instantly instead of animating like a deliberate user interaction
 // would. Without this, the very first collapse of a mobile drawer — on
-// load, or on crossing the 640px breakpoint — visibly flashes open before
+// load, or on crossing the 768px breakpoint — visibly flashes open before
 // snapping shut, because the same transition rule that makes a *click*
 // feel smooth also catches this initial state change.
 function withoutTransition(el, fn) {
@@ -30,11 +30,11 @@ function withoutTransition(el, fn) {
 // Mobile disclosure drawer (design-plan.html §6.1). Progressive
 // enhancement: the drawer defaults to open in CSS (meta.css), so with this
 // script absent every section's metadata is readable at every width. Below
-// 640px this script collapses drawers into an accordion; at or above
-// 640px it removes that wiring entirely, so aria-expanded is never exposed
+// 768px this script collapses drawers into an accordion; at or above
+// 768px it removes that wiring entirely, so aria-expanded is never exposed
 // on a control that would do nothing.
 function initDisclosure(road) {
-	const NARROW = window.matchMedia('(max-width: 639.98px)');
+	const NARROW = window.matchMedia('(max-width: 767.98px)');
 	const sections = Array.from(road.querySelectorAll('.road-section:not(.road-slot)'));
 
 	function collapseAll() {
@@ -97,7 +97,7 @@ function initDisclosure(road) {
 	NARROW.addEventListener('change', (event) => applyMode(event.matches));
 }
 
-// Desktop description overflow (>= 640px). road.css pins each section's
+// Desktop description overflow (>= 768px). road.css pins each section's
 // row height to its own artwork's rendered height, so — unlike the mobile
 // drawer — .road-meta must never grow past that, or the row stretches and
 // the chain visibly breaks (a gap opens below the shorter image). The
@@ -112,7 +112,7 @@ function initDisclosure(road) {
 // a descendant of its clip, so the two are found by pairing each button up
 // with the clip named in its aria-controls, rather than by DOM containment.
 function initDescOverflow(road) {
-	const WIDE = window.matchMedia('(min-width: 640px)');
+	const WIDE = window.matchMedia('(min-width: 768px)');
 	const pairs = Array.from(road.querySelectorAll('.road-meta-more'))
 		.map((more) => ({
 			more,
